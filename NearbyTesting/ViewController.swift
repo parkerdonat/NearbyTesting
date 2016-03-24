@@ -14,25 +14,25 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     @IBOutlet var mapView: MKMapView!
     let annotation = MKPointAnnotation()
-    let locationManager = CLLocationManager()
-    
+    var locationManager = CLLocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.startUpdatingLocation()
-        mapView.showsUserLocation = true
-        
         
         self.mapView.delegate = self
+        mapView.showsUserLocation = true
         
         let createAnnotation = UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognizer))
         self.view.addGestureRecognizer(createAnnotation)
+        
     }
     
-    // Drop a NEW PIN
+    //MARK: - Drop a NEW PIN
     func tapGestureRecognizer(tapGestureRecognizer: UITapGestureRecognizer) {
         print("Tap Gesture Recognized!")
         
@@ -77,6 +77,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     func addAlarmPin(alarmPin: AlarmPin) {
         addRadiusOverlayForAlarmPin(alarmPin)
+        startMonitoringAlarmPin(alarmPin)
     }
     
     func removeAlarmPin(alarmPin: AlarmPin) {
@@ -124,12 +125,38 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         return MKOverlayRenderer()
     }
     
-    //    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-    //        // Modify Annotation attributes here
-    //    }
+    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        // Modify Annotation attributes here
+        if annotation is MKUserLocation {
+            //return nil so map view draws "blue dot" for standard user location
+            return nil
+        }
+        
+        var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier("pin")
+        
+        if pinView == nil {
+            pinView = MKAnnotationView(annotation: annotation, reuseIdentifier: "pin")
+            pinView!.canShowCallout = true
+            pinView!.image = UIImage(named: "test.png")
+            
+            // Add image to left callout
+            let mugIconView = UIImageView(image: UIImage(named: "test.png"))
+            pinView!.leftCalloutAccessoryView = mugIconView
+            
+            // Add detail button to right callout
+            let calloutButton = UIButton.init(type: .DetailDisclosure) as UIButton
+            pinView!.rightCalloutAccessoryView = calloutButton
+        }
+        else {
+            pinView!.annotation = annotation
+        }
+        return pinView
+    }
     
     func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         // Segue to editAlarm details
+        print("Callout was tapped!")
     }
     
     func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, didChangeDragState newState: MKAnnotationViewDragState, fromOldState oldState: MKAnnotationViewDragState) {
@@ -152,48 +179,105 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     //MARK: - Other MapView Helper Functions
     
-    //    @IBAction func userTappedToZoomToCurrentLocation(sender: AnyObject) {
-    //        // zoom to current location
-    //        zoomToUserLocationInMapView(sender as! MKMapView)
-    //    }
-    
+    // CL requires each geofence to be be represented as a CLCircularRegion before it can be registered for monitoring.
     func regionWithAlarmPin(alarmPin: AlarmPin) -> CLCircularRegion {
+        
         // create the reagion to show with AlarmPin
         let region = CLCircularRegion(center: alarmPin.coordinate, radius: alarmPin.radius, identifier: alarmPin.identifier)
-        //region.notifyOnEntry =  .OnEntry
+        region.notifyOnEntry = true
         return region
     }
     
     func startMonitoringAlarmPin(alarmPin: AlarmPin) {
-        // Checks if device is available, checks authorization, and at which region
+        // Checks if device is available, checks authorization to be granted permission to use location services, and lastly at which region to begin monitoring
+        
+        // 1
+        if !CLLocationManager.isMonitoringAvailableForClass(CLCircularRegion) {
+            let alertController = UIAlertController(title: "Alert!", message: "Geofencing is not supported on this device!", preferredStyle: .Alert)
+            
+            let defaultAction = UIAlertAction(title: "Cancel", style: .Cancel) { (alert) -> Void in
+                print("Boring.")
+            }
+            
+            let okAction = UIAlertAction(title: "Okay", style: .Default) { (alert) -> Void in
+                print("Okey dokey")
+            }
+            
+            alertController.addAction(defaultAction)
+            alertController.addAction(okAction)
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+            return
+        }
+        // 2
+        if CLLocationManager.authorizationStatus() != .AuthorizedAlways {
+            let alertController = UIAlertController(title: "Warning!", message: "Your alarm is saved but will only be activated once you grant Nearby permission to access the device location.", preferredStyle: .Alert)
+            
+            let defaultAction = UIAlertAction(title: "Cancel", style: .Cancel) { (alert) -> Void in
+                print("Boring.")
+            }
+            
+            let okAction = UIAlertAction(title: "Okay", style: .Default) { (alert) -> Void in
+                print("Okey dokey")
+            }
+            
+            alertController.addAction(defaultAction)
+            alertController.addAction(okAction)
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+        }
+        // 3
+        let region = regionWithAlarmPin(alarmPin)
+        // 4
+        locationManager.startMonitoringForRegion(region)
     }
     
-    func zoomToUserLocationInMapView(mapView: MKMapView) {
-        if let coordinate = mapView.userLocation.location?.coordinate {
-            let region = MKCoordinateRegionMakeWithDistance(coordinate, 10000, 10000)
-            mapView.setRegion(region, animated: true)
+    // Call when need to stop monitoring region
+    func stopMonitoringAlarmPin(alarmPin: AlarmPin) {
+        for region in locationManager.monitoredRegions {
+            if let circularRegion = region as? CLCircularRegion {
+                if circularRegion.identifier == alarmPin.identifier {
+                    locationManager.stopMonitoringForRegion(circularRegion)
+                }
+            }
         }
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
+        // Draws the map for the current location
         let location = locations.last
         let center = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude)
         let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
         mapView.setRegion(region, animated: false)
         locationManager.stopUpdatingLocation()
-        
+    }
+    
+    func handleRegionEvent(region: CLRegion) {
+        // Show an alert if application is active
+        if UIApplication.sharedApplication().applicationState == .Active {
+            // Then show an Alert Notification here
+        } else {
+            // Otherwise present a Local Notification when app is closed
+            let notification = UILocalNotification()
+            notification.soundName = "Default"
+            UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+        }
     }
     
     func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        
-        
-        
+        print("Entering Region")
     }
-
+    
     func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
         
-        
     }
+    
+    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        // Be notified if the user changes location preference
+        print("Hey, you turned off your navigation for this app. That means you won't be able to make alarms")
+        
+        mapView.showsUserLocation = (status == .AuthorizedAlways)
+    }
+    
 }
 
