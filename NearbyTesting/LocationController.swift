@@ -14,32 +14,31 @@ class LocationController: NSObject, CLLocationManagerDelegate {
     
     static let sharedInstance = LocationController()
     
-    var manager: CLLocationManager!
-    
+    var locationManager: CLLocationManager!
+
     func setUpManager() {
      
-        manager.delegate = self
-        manager.requestAlwaysAuthorization()
-        manager.desiredAccuracy = kCLLocationAccuracyBest
-        manager.requestAlwaysAuthorization()
-        manager.startUpdatingLocation()
+        locationManager.delegate = self
+        locationManager.requestAlwaysAuthorization()
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestAlwaysAuthorization()
+        locationManager.startUpdatingLocation()
         
     }
 
-    
     func handleRegionEvent(region: CLRegion) {
         // Show an alert if application is active
         if UIApplication.sharedApplication().applicationState == .Active {
-            // Show Alert Notification
+            // Then show an Alert Notification
         } else {
-            // Otherwise present a local notification
+            // Otherwise present a Local Notification
             let notification = UILocalNotification()
             notification.soundName = "Default";
             UIApplication.sharedApplication().presentLocalNotificationNow(notification)
         }
     }
     
-    @objc func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
+    func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
         // Use to know when passed geofence
         if region is CLCircularRegion {
             handleRegionEvent(region)

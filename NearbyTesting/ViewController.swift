@@ -11,53 +11,53 @@ import MapKit
 import CoreLocation
 
 class ViewController: UIViewController, MKMapViewDelegate {
-
+    
     @IBOutlet var mapView: MKMapView!
+    let annotation = MKPointAnnotation()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.mapView.delegate = self
         
-        let createAnnotation = UITapGestureRecognizer(target: self, action: "tapGestureRecognizer:")
+        let createAnnotation = UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognizer))
         self.view.addGestureRecognizer(createAnnotation)
-
-        // Set the region
-//        let newYorkLocation = CLLocationCoordinate2D(latitude: 40.730872, longitude: -74.003066)
-//        let span = MKCoordinateSpanMake(0.01, 0.01)
-//        let region = MKCoordinateRegion(center: newYorkLocation, span: span)
-//        mapView.setRegion(region, animated: true)
-        
-        // Drop a pin
-//        let dropPin = MKPointAnnotation()
-//        dropPin.coordinate = newYorkLocation
-//        dropPin.title = "New York City"
-//        dropPin.subtitle = "Sweet annotation brah!"
-//
-//        mapView.addAnnotation(dropPin)
     }
     
-    // Drop an NEW PIN
+    // Drop a NEW PIN
     func tapGestureRecognizer(tapGestureRecognizer: UITapGestureRecognizer) {
         print("Gesture Recognized")
+        
+        // Delete previous annotations so only one pin exists on the map at one time
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.removeOverlays(mapView.overlays)
+        
         let touchPoint = tapGestureRecognizer.locationInView(self.mapView)
         let newCoordinate: CLLocationCoordinate2D = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
-        let annotation = MKPointAnnotation()
+        
+        // Callout Annotation
         annotation.coordinate = newCoordinate
-        annotation.title = ""
-        annotation.subtitle = ""
+        annotation.title = "New Pin"
+        annotation.subtitle = "Sweet Annotation Bruh!"
         mapView.addAnnotation(annotation)
-        let fenceDistance: CLLocationDistance = 161000
-        //let circleMidPoint = CLLocationCoordinate2DMake(40.730872, -74.003066)
+        
+        // Create circle with the Pin
+        let fenceDistance: CLLocationDistance = 16100
         let circle = MKCircle(centerCoordinate: newCoordinate, radius: fenceDistance)
-      
         let circleRenderer = MKCircleRenderer(overlay: circle)
-        circleRenderer.lineWidth = 1.0
+        circleRenderer.lineWidth = 3.0
         circleRenderer.strokeColor = UIColor.purpleColor()
         circleRenderer.fillColor = UIColor.purpleColor().colorWithAlphaComponent(0.4)
-
+        
+        // Zoom into new pin
+        //self.mapView.showAnnotations(self.mapView.annotations, animated: true)
+        
+        // Automatically show annotation callout
+        //let yourAnnotationAtIndex = 0
+        //mapView.selectAnnotation(mapView.annotations[yourAnnotationAtIndex], animated: false)
+        
         mapView.addOverlay(circle)
-
+        
     }
     
     // MARK: Functions that update the model/associated views with geotification changes
@@ -65,6 +65,12 @@ class ViewController: UIViewController, MKMapViewDelegate {
     func addAlarmPin(alarmPin: AlarmPin) {
         addRadiusOverlayForAlarmPin(alarmPin)
     }
+    
+    func removeAlarmPin(alarmPin: AlarmPin) {
+        removeRadiusOverlayForAlarmPin(alarmPin)
+    }
+    
+    
     
     // MARK: - Overlay Functions
     
@@ -105,9 +111,9 @@ class ViewController: UIViewController, MKMapViewDelegate {
         return MKOverlayRenderer()
     }
     
-//    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-//        // Modify Annotation attributes here
-//    }
+    //    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+    //        // Modify Annotation attributes here
+    //    }
     
     func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         // Segue to editAlarm details
@@ -117,13 +123,27 @@ class ViewController: UIViewController, MKMapViewDelegate {
         // Use if I want to drag the pin
     }
     
+    // Shows the callout with delay
+    func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
+        
+        mapView.addAnnotation(annotation)
+        performSelector(#selector(selectAnnotation), withObject: annotation, afterDelay: 0.5)
+        
+    }
+    
+    // Shows the callout with delay
+    func selectAnnotation(annotation: MKAnnotation) {
+        mapView.selectAnnotation(annotation, animated: true)
+    }
+    
+    
     //MARK: - Other MapView Helper Functions
     
-//    @IBAction func userTappedToZoomToCurrentLocation(sender: AnyObject) {
-//        // zoom to current location
-//        zoomToUserLocationInMapView(sender as! MKMapView)
-//    }
-
+    //    @IBAction func userTappedToZoomToCurrentLocation(sender: AnyObject) {
+    //        // zoom to current location
+    //        zoomToUserLocationInMapView(sender as! MKMapView)
+    //    }
+    
     func regionWithAlarmPin(alarmPin: AlarmPin) -> CLCircularRegion {
         // create the reagion to show with AlarmPin
         let region = CLCircularRegion(center: alarmPin.coordinate, radius: alarmPin.radius, identifier: alarmPin.identifier)

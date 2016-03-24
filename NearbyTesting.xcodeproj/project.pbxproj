@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DD5119171CA3297300B6EC51 /* HelperFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5119161CA3297300B6EC51 /* HelperFunctions.swift */; };
 		DD5119191CA32C1B00B6EC51 /* AlarmPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5119181CA32C1B00B6EC51 /* AlarmPin.swift */; };
 		DDDB66E91CA1DFD200124D06 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB66E81CA1DFD200124D06 /* AppDelegate.swift */; };
 		DDDB66EB1CA1DFD200124D06 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB66EA1CA1DFD200124D06 /* ViewController.swift */; };
@@ -20,7 +19,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		DD5119161CA3297300B6EC51 /* HelperFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelperFunctions.swift; sourceTree = "<group>"; };
 		DD5119181CA32C1B00B6EC51 /* AlarmPin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlarmPin.swift; sourceTree = "<group>"; };
 		DDDB66E51CA1DFD200124D06 /* NearbyTesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NearbyTesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDDB66E81CA1DFD200124D06 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -71,7 +69,6 @@
 				DDDB66EA1CA1DFD200124D06 /* ViewController.swift */,
 				DD5119181CA32C1B00B6EC51 /* AlarmPin.swift */,
 				DDDB66FA1CA1EA8F00124D06 /* LocationController.swift */,
-				DD5119161CA3297300B6EC51 /* HelperFunctions.swift */,
 				DDDB66EC1CA1DFD200124D06 /* Main.storyboard */,
 				DDDB66EF1CA1DFD200124D06 /* Assets.xcassets */,
 				DDDB66F11CA1DFD200124D06 /* LaunchScreen.storyboard */,
@@ -166,7 +163,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDDB66EB1CA1DFD200124D06 /* ViewController.swift in Sources */,
-				DD5119171CA3297300B6EC51 /* HelperFunctions.swift in Sources */,
 				DDDB66FB1CA1EA8F00124D06 /* LocationController.swift in Sources */,
 				DDDB66E91CA1DFD200124D06 /* AppDelegate.swift in Sources */,
 				DD5119191CA32C1B00B6EC51 /* AlarmPin.swift in Sources */,
