@@ -42,14 +42,19 @@ class ViewController: UIViewController, MKMapViewDelegate {
         mapView.addAnnotation(annotation)
         
         // Create circle with the Pin
-        let fenceDistance: CLLocationDistance = 16100
+        let fenceDistance: CLLocationDistance = 3000
         let circle = MKCircle(centerCoordinate: newCoordinate, radius: fenceDistance)
         let circleRenderer = MKCircleRenderer(overlay: circle)
         circleRenderer.lineWidth = 3.0
         circleRenderer.strokeColor = UIColor.purpleColor()
         circleRenderer.fillColor = UIColor.purpleColor().colorWithAlphaComponent(0.4)
         
-        // Zoom into new pin
+        // Creates the span and animated zoomed into an area
+        let span = MKCoordinateSpanMake(0.2, 0.2)
+        let region = MKCoordinateRegion(center: newCoordinate, span: span)
+        mapView.setRegion(region, animated: true)
+        
+        // Zoom into new pin without a region
         //self.mapView.showAnnotations(self.mapView.annotations, animated: true)
         
         // Automatically show annotation callout
