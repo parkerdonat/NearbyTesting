@@ -38,14 +38,17 @@ class LocationController: NSObject, CLLocationManagerDelegate {
         }
     }
     
+    // MARK: - CLLocationManager Delegate Methods
     func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        // Use to know when passed geofence
+        // Knows when passed geofence to call handleRegionEvent
         if region is CLCircularRegion {
             handleRegionEvent(region)
         }
     }
     
-    // MARK: - CLLocationManager Delegate Methods
+    func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
+        // Calls the didEnterRegion that the state has changed. When it has changed, didEnterRegion will call the notification.
+    }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // Object that is being updated

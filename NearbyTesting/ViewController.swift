@@ -34,7 +34,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     // Drop a NEW PIN
     func tapGestureRecognizer(tapGestureRecognizer: UITapGestureRecognizer) {
-        print("Gesture Recognized")
+        print("Tap Gesture Recognized!")
         
         // Delete previous annotations so only one pin exists on the map at one time
         mapView.removeAnnotations(mapView.annotations)
@@ -187,6 +187,11 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
         
+        
+        
+    }
+
+    func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
         
         
     }
