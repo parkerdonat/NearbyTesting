@@ -15,17 +15,20 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     @IBOutlet var mapView: MKMapView!
     let annotation = MKPointAnnotation()
     var locationManager = CLLocationManager()
+    var annotationView: MKPinAnnotationView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //locationManager = CLLocationManager()
+        locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.startUpdatingLocation()
         
         self.mapView.delegate = self
         mapView.showsUserLocation = true
+        // Aded from Kaelin
+        //mapView.setUserTrackingMode(MKUserTrackingMode.Follow, animated: true)
         
         let createAnnotation = UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognizer))
         self.view.addGestureRecognizer(createAnnotation)
@@ -58,16 +61,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         circleRenderer.fillColor = UIColor.purpleColor().colorWithAlphaComponent(0.4)
         
         // Creates the span and animated zoomed into an area
-        let span = MKCoordinateSpanMake(0.2, 0.2)
+        let span = MKCoordinateSpanMake(0.1, 0.1)
         let region = MKCoordinateRegion(center: newCoordinate, span: span)
         mapView.setRegion(region, animated: true)
-        
-        // Zoom into new pin without a region
-        //self.mapView.showAnnotations(self.mapView.annotations, animated: true)
-        
-        // Automatically show annotation callout
-        //let yourAnnotationAtIndex = 0
-        //mapView.selectAnnotation(mapView.annotations[yourAnnotationAtIndex], animated: false)
         
         mapView.addOverlay(circle)
         
@@ -117,32 +113,29 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
         if overlay is MKCircle {
             let circleRenderer = MKCircleRenderer(overlay: overlay)
-            circleRenderer.lineWidth = 1.0
-            circleRenderer.strokeColor = UIColor.purpleColor()
-            circleRenderer.fillColor = UIColor.purpleColor().colorWithAlphaComponent(0.4)
+            circleRenderer.lineWidth = 3.0
+            circleRenderer.strokeColor = UIColor.redColor()
+            circleRenderer.fillColor = UIColor.redColor().colorWithAlphaComponent(0.4)
             return circleRenderer
         }
         return MKOverlayRenderer()
     }
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        
         // Modify Annotation attributes here
         if annotation is MKUserLocation {
             //return nil so map view draws "blue dot" for standard user location
             return nil
         }
         
-        var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier("pin")
+        let reuseID = "pin"
+        var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseID) as? MKPinAnnotationView
         
         if pinView == nil {
-            pinView = MKAnnotationView(annotation: annotation, reuseIdentifier: "pin")
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
             pinView!.canShowCallout = true
-            pinView!.image = UIImage(named: "test.png")
-            
-            // Add image to left callout
-            let mugIconView = UIImageView(image: UIImage(named: "test.png"))
-            pinView!.leftCalloutAccessoryView = mugIconView
+            pinView?.animatesDrop = true
+            pinView?.pinTintColor = UIColor.redColor()
             
             // Add detail button to right callout
             let calloutButton = UIButton.init(type: .DetailDisclosure) as UIButton
@@ -151,6 +144,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         else {
             pinView!.annotation = annotation
         }
+    
         return pinView
     }
     
@@ -247,7 +241,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         // Draws the map for the current location
         let location = locations.last
         let center = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude)
-        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
+        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
         mapView.setRegion(region, animated: false)
         locationManager.stopUpdatingLocation()
     }
@@ -274,9 +268,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         // Be notified if the user changes location preference
-        print("Hey, you turned off your navigation for this app. That means you won't be able to make alarms")
-        
         mapView.showsUserLocation = (status == .AuthorizedAlways)
+        print("Authorized!")
+        //print("Hey, you turned off your navigation for this app. That means you won't be able to make alarms")
+
     }
     
 }

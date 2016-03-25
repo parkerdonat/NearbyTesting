@@ -16,6 +16,7 @@
 		DDDB66FB1CA1EA8F00124D06 /* LocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB66FA1CA1EA8F00124D06 /* LocationController.swift */; };
 		DDDB66FD1CA1F7BC00124D06 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDDB66FC1CA1F7BC00124D06 /* MapKit.framework */; };
 		DDDB66FF1CA1F7C700124D06 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDDB66FE1CA1F7C700124D06 /* CoreLocation.framework */; };
+		DDEED80C1CA59F8F002A926C /* TestLocations.gpx in Resources */ = {isa = PBXBuildFile; fileRef = DDEED80B1CA59F8F002A926C /* TestLocations.gpx */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		DDDB66FA1CA1EA8F00124D06 /* LocationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationController.swift; sourceTree = "<group>"; };
 		DDDB66FC1CA1F7BC00124D06 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		DDDB66FE1CA1F7C700124D06 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		DDEED80B1CA59F8F002A926C /* TestLocations.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TestLocations.gpx; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 				DDDB66EF1CA1DFD200124D06 /* Assets.xcassets */,
 				DDDB66F11CA1DFD200124D06 /* LaunchScreen.storyboard */,
 				DDDB66F41CA1DFD200124D06 /* Info.plist */,
+				DDEED80B1CA59F8F002A926C /* TestLocations.gpx */,
 			);
 			path = NearbyTesting;
 			sourceTree = "<group>";
@@ -151,6 +154,7 @@
 			files = (
 				DDDB66F31CA1DFD200124D06 /* LaunchScreen.storyboard in Resources */,
 				DDDB66F01CA1DFD200124D06 /* Assets.xcassets in Resources */,
+				DDEED80C1CA59F8F002A926C /* TestLocations.gpx in Resources */,
 				DDDB66EE1CA1DFD200124D06 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
