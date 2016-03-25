@@ -35,9 +35,13 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
     }
     
+    
+    
     //MARK: - Drop a NEW PIN
     func tapGestureRecognizer(tapGestureRecognizer: UITapGestureRecognizer) {
         print("Tap Gesture Recognized!")
+        
+        locationManager.requestAlwaysAuthorization()
         
         // Delete previous annotations so only one pin exists on the map at one time
         mapView.removeAnnotations(mapView.annotations)
@@ -64,14 +68,19 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         let span = MKCoordinateSpanMake(0.1, 0.1)
         let region = MKCoordinateRegion(center: newCoordinate, span: span)
         mapView.setRegion(region, animated: true)
-        
         mapView.addOverlay(circle)
+        
+        // Add an alarm pin
+        let alarm = AlarmPin(coordinate: newCoordinate, radius: fenceDistance, identifier: "")
+        addAlarmPin(alarm)
+        startMonitoringAlarmPin(alarm)
         
     }
     
-    // MARK: Functions that update the model/associated views with geotification changes
+    // MARK: To update view with model
     
     func addAlarmPin(alarmPin: AlarmPin) {
+        //mapView.addAnnotation(alarmPin)
         addRadiusOverlayForAlarmPin(alarmPin)
         startMonitoringAlarmPin(alarmPin)
     }
@@ -79,6 +88,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     func removeAlarmPin(alarmPin: AlarmPin) {
         removeRadiusOverlayForAlarmPin(alarmPin)
     }
+    
     
     
     
@@ -104,6 +114,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             }
         }
     }
+    
     
     
     // MARK: - MKMapView Delegate Methods
@@ -171,14 +182,16 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     }
     
     
-    //MARK: - Other MapView Helper Functions
+    
+    //MARK: - MapView Helper Functions
     
     // CL requires each geofence to be be represented as a CLCircularRegion before it can be registered for monitoring.
     func regionWithAlarmPin(alarmPin: AlarmPin) -> CLCircularRegion {
         
-        // create the reagion to show with AlarmPin
+        // create the region to show with AlarmPin
         let region = CLCircularRegion(center: alarmPin.coordinate, radius: alarmPin.radius, identifier: alarmPin.identifier)
         region.notifyOnEntry = true
+        
         return region
     }
     
@@ -190,11 +203,11 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             let alertController = UIAlertController(title: "Alert!", message: "Geofencing is not supported on this device!", preferredStyle: .Alert)
             
             let defaultAction = UIAlertAction(title: "Cancel", style: .Cancel) { (alert) -> Void in
-                print("Boring.")
+                print("Canceled button pressed.")
             }
             
             let okAction = UIAlertAction(title: "Okay", style: .Default) { (alert) -> Void in
-                print("Okey dokey")
+                print("Okey button pressed")
             }
             
             alertController.addAction(defaultAction)
@@ -208,11 +221,11 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             let alertController = UIAlertController(title: "Warning!", message: "Your alarm is saved but will only be activated once you grant Nearby permission to access the device location.", preferredStyle: .Alert)
             
             let defaultAction = UIAlertAction(title: "Cancel", style: .Cancel) { (alert) -> Void in
-                print("Boring.")
+                print("Canceled button pressed.")
             }
             
             let okAction = UIAlertAction(title: "Okay", style: .Default) { (alert) -> Void in
-                print("Okey dokey")
+                print("Okey button pressed")
             }
             
             alertController.addAction(defaultAction)
@@ -250,26 +263,43 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         // Show an alert if application is active
         if UIApplication.sharedApplication().applicationState == .Active {
             // Then show an Alert Notification here
+            let alertController = UIAlertController(title: "YAY!!", message: "You've reached your desination.", preferredStyle: .Alert)
+            
+            let okAction = UIAlertAction(title: "Okay", style: .Default) { (alert) -> Void in
+                print("Okay button pressed")
+                self.locationManager.startMonitoringForRegion(region)            }
+            
+            alertController.addAction(okAction)
+            
+            locationManager.stopMonitoringForRegion(region)
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
         } else {
             // Otherwise present a Local Notification when app is closed
             let notification = UILocalNotification()
             notification.soundName = "Default"
             UIApplication.sharedApplication().presentLocalNotificationNow(notification)
         }
+        
+        
     }
     
     func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        print("Entering Region")
+        print("Entered Region!")
+        if region is CLCircularRegion {
+            handleRegionEvent(region)
+        }
     }
     
     func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
-        
+        // Don't know if I need this.
     }
     
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         // Be notified if the user changes location preference
         mapView.showsUserLocation = (status == .AuthorizedAlways)
         print("Authorized!")
+        
         //print("Hey, you turned off your navigation for this app. That means you won't be able to make alarms")
 
     }
