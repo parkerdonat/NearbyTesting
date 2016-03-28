@@ -20,10 +20,21 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        locationManager = CLLocationManager()
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.startUpdatingLocation()
+        //locationManager = CLLocationManager()
+        //locationManager.requestWhenInUseAuthorization()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.requestLocation()
+            locationManager.startUpdatingLocation()
+        }
+        
+//        
+//        locationManager = CLLocationManager()
+//        locationManager.delegate = self
+//        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+//        locationManager.startUpdatingLocation()
         
         self.mapView.delegate = self
         mapView.showsUserLocation = true
@@ -251,6 +262,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        // Show user's location on map as blue dot
+        mapView.showsUserLocation = true
+
         // Draws the map for the current location
         let location = locations.last
         let center = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude)
@@ -302,6 +316,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
         //print("Hey, you turned off your navigation for this app. That means you won't be able to make alarms")
 
+    }
+    
+    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+        print("Something when wrong.")
     }
     
 }
