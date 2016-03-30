@@ -10,19 +10,43 @@ import UIKit
 import CoreLocation
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    let locationManager = CLLocationManager()
+    
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        locationManager.delegate = self
-        locationManager.requestAlwaysAuthorization()
         
-        application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Sound, .Alert, .Badge], categories: nil))
+        LocationController.sharedInstance.setUpManager()
+        
+        // Options using the lock scren
+        let remindAction = UIMutableUserNotificationAction()
+        remindAction.identifier = "remind"
+        remindAction.title = "Remind later"
+        remindAction.activationMode = .Foreground
+        remindAction.destructive = true
+        
+        let seeItAction = UIMutableUserNotificationAction()
+        remindAction.identifier = "seeIt"
+        remindAction.title = "Lets See It"
+        remindAction.activationMode = .Foreground
+        remindAction.destructive = true
+        
+        let category = UIMutableUserNotificationCategory()
+        category.identifier = "notif"
+        category.setActions([remindAction, seeItAction], forContext: .Default)
+        category.setActions([remindAction], forContext: .Default)
+        
+        let notificationsSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
+        application.registerUserNotificationSettings(notificationsSettings)
         UIApplication.sharedApplication().cancelAllLocalNotifications()
         
         return true
+    }
+    
+    // Code to be notified inside the app
+    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+        NSNotificationCenter.defaultCenter().postNotificationName("Notification", object: nil, userInfo: nil)
     }
 
     func applicationWillResignActive(application: UIApplication) {

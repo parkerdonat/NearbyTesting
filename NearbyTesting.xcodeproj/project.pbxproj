@@ -69,8 +69,8 @@
 			children = (
 				DDDB66E81CA1DFD200124D06 /* AppDelegate.swift */,
 				DDDB66EA1CA1DFD200124D06 /* ViewController.swift */,
-				DD5119181CA32C1B00B6EC51 /* AlarmPin.swift */,
 				DDDB66FA1CA1EA8F00124D06 /* LocationController.swift */,
+				DD5119181CA32C1B00B6EC51 /* AlarmPin.swift */,
 				DDDB66EC1CA1DFD200124D06 /* Main.storyboard */,
 				DDDB66EF1CA1DFD200124D06 /* Assets.xcassets */,
 				DDDB66F11CA1DFD200124D06 /* LaunchScreen.storyboard */,

@@ -8,59 +8,92 @@
 
 import UIKit
 import CoreLocation
+import MapKit
 
 
-class LocationController: NSObject, CLLocationManagerDelegate {
+class LocationController: NSObject, MKMapViewDelegate, CLLocationManagerDelegate {
     
     static let sharedInstance = LocationController()
     
-    var locationManager: CLLocationManager!
-
+    var locationManager: CLLocationManager?
+    
+    
     func setUpManager() {
-     
-        locationManager.delegate = self
-        locationManager.requestAlwaysAuthorization()
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestAlwaysAuthorization()
-        locationManager.startUpdatingLocation()
         
-    }
-
-    func handleRegionEvent(region: CLRegion) {
-        // Show an alert if application is active
-        if UIApplication.sharedApplication().applicationState == .Active {
-            // Then show an Alert Notification
-        } else {
-            // Otherwise present a Local Notification
-            let notification = UILocalNotification()
-            notification.soundName = "Default";
-            UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+        locationManager = CLLocationManager()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            if let locationManager = locationManager {
+                locationManager.delegate = self
+                locationManager.requestAlwaysAuthorization()
+                locationManager.desiredAccuracy = kCLLocationAccuracyBest
+                locationManager.requestLocation()
+                locationManager.startUpdatingLocation()
+            }
         }
     }
     
     // MARK: - CLLocationManager Delegate Methods
+    
+    
+    func handleRegionEvent(region: CLRegion) {
+        // Show an alert if application is active
+        if UIApplication.sharedApplication().applicationState == .Active {
+            // Then show an Alert Notification here
+            let alertController = UIAlertController(title: "YAY!!", message: "You've reached your desination.", preferredStyle: .Alert)
+            
+            let okAction = UIAlertAction(title: "Okay", style: .Default) { (alert) -> Void in
+                print("Okay button pressed")
+                LocationController.sharedInstance.locationManager?.startMonitoringForRegion(region)            }
+            
+            alertController.addAction(okAction)
+            
+            locationManager?.stopMonitoringForRegion(region)
+            
+            // How do I present this alert view controller?
+            //self.presentViewController(alertController, animated: true, completion: nil)
+        } else {
+            // Otherwise present a Local Notification when app is closed
+            let notification = UILocalNotification()
+            notification.soundName = "Default"
+            UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+        }
+    }
+    
     func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        // Knows when passed geofence to call handleRegionEvent
+        print("Entered Region!")
         if region is CLCircularRegion {
             handleRegionEvent(region)
         }
     }
     
-    func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
-        // Calls the didEnterRegion that the state has changed. When it has changed, didEnterRegion will call the notification.
-    }
-    
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        // Object that is being updated
+        
+        // Draws the map for the current location
+        let location = locations.last
+        let center = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude)
+        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
+        
+         // How do I update the mapview here?
+        //mapView.setRegion(region, animated: false)
+        locationManager?.stopUpdatingLocation()
     }
+
     
-    func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
-        // Begin monitoring region
-    }
+//    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+//        
+//        // Be notified if the user changes location preference
+//        switch status {
+//        case .Authorized, .AuthorizedWhenInUse:
+//            manager.startUpdatingLocation()
+//            mapView.showsUserLocation = true
+//        default: break
+//        }
+//    }
+
     
-    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        // Be notified if the user changes location preference
-        print("Hey, you turned off your navigation for this app. That means you won't be able to make alarms")
+    func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
+        // Don't know if I need this.
     }
     
     func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
@@ -68,14 +101,15 @@ class LocationController: NSObject, CLLocationManagerDelegate {
     }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-        // Catch error when unable to retrieve a location value
+        print("Something when wrong.")
     }
+    
     
     // MARK: -  Testing Boundaries
     
-//    func containsCoordinate(coordinate: CLLocationCoordinate2D) -> Bool {
-//        
-//        return true
-//    }
+    //    func containsCoordinate(coordinate: CLLocationCoordinate2D) -> Bool {
+    //
+    //        return true
+    //    }
     
 }
