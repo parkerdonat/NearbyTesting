@@ -291,8 +291,12 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         } else {
             // Otherwise present a Local Notification when app is closed
             let notification = UILocalNotification()
-            notification.soundName = "Default"
+            notification.alertTitle = "Alarm Notification"
+            notification.alertBody = "You are near your destination!"
+            notification.soundName = UILocalNotificationDefaultSoundName
             UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+            
+            locationManager.stopMonitoringForRegion(region)
         }
         
         

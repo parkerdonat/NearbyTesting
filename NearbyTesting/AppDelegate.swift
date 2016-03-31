@@ -19,11 +19,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         locationManager.delegate = self
         locationManager.requestAlwaysAuthorization()
         
+        // Options using the lock scren
+        let remindAction = UIMutableUserNotificationAction()
+        remindAction.identifier = "remind"
+        remindAction.title = "Remind later"
+        remindAction.activationMode = .Foreground
+        remindAction.destructive = true
+        
+        let seeItAction = UIMutableUserNotificationAction()
+        remindAction.identifier = "seeIt"
+        remindAction.title = "Lets See It"
+        remindAction.activationMode = .Foreground
+        remindAction.destructive = true
+        
+        let category = UIMutableUserNotificationCategory()
+        category.identifier = "notif"
+        category.setActions([remindAction, seeItAction], forContext: .Default)
+        category.setActions([remindAction], forContext: .Default)
+        
         application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Sound, .Alert, .Badge], categories: nil))
-        UIApplication.sharedApplication().cancelAllLocalNotifications()
         
         return true
     }
+    // Code to be notified inside the app
+    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+        NSNotificationCenter.defaultCenter().postNotificationName("Notification", object: nil, userInfo: nil)
+    }
+
 
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
