@@ -25,7 +25,7 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app won&apos;t work properly without clicking &quot;Allow&quot;.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>App need location services to use the map</string>
+	<string>Location is required to find out where you are.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

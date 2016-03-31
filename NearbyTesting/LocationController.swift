@@ -10,6 +10,7 @@ import UIKit
 import CoreLocation
 import MapKit
 
+public let AlarmPinNotification = "alarmPinNotificationName"
 
 class LocationController: NSObject, MKMapViewDelegate, CLLocationManagerDelegate {
     
@@ -21,20 +22,26 @@ class LocationController: NSObject, MKMapViewDelegate, CLLocationManagerDelegate
     func setUpManager() {
         
         locationManager = CLLocationManager()
+        locationManager?.delegate = self
         
+        if CLLocationManager.authorizationStatus() == .NotDetermined {
+            locationManager?.requestAlwaysAuthorization()
+        }
         if CLLocationManager.locationServicesEnabled() {
             if let locationManager = locationManager {
-                locationManager.delegate = self
-                locationManager.requestAlwaysAuthorization()
-                locationManager.desiredAccuracy = kCLLocationAccuracyBest
-                locationManager.requestLocation()
-                locationManager.startUpdatingLocation()
+                //locationManager.delegate = self
+//                if locationManager.respondsToSelector(#selector(CLLocationManager.requestAlwaysAuthorization)) {
+//                    locationManager.requestAlwaysAuthorization()
+//                } else {
+                    locationManager.desiredAccuracy = kCLLocationAccuracyBest
+                    locationManager.requestLocation()
+                    locationManager.startUpdatingLocation()
+//                }
             }
         }
     }
     
     // MARK: - CLLocationManager Delegate Methods
-    
     
     func handleRegionEvent(region: CLRegion) {
         // Show an alert if application is active
@@ -51,7 +58,9 @@ class LocationController: NSObject, MKMapViewDelegate, CLLocationManagerDelegate
             locationManager?.stopMonitoringForRegion(region)
             
             // How do I present this alert view controller?
-            //self.presentViewController(alertController, animated: true, completion: nil)
+            let nc = NSNotificationCenter.defaultCenter()
+            nc.postNotificationName(AlarmPinNotification, object: self)
+            
         } else {
             // Otherwise present a Local Notification when app is closed
             let notification = UILocalNotification()
@@ -74,23 +83,22 @@ class LocationController: NSObject, MKMapViewDelegate, CLLocationManagerDelegate
         let center = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude)
         let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
         
-         // How do I update the mapview here?
+        // How do I update the mapview here?
         //mapView.setRegion(region, animated: false)
         locationManager?.stopUpdatingLocation()
     }
-
     
-//    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-//        
-//        // Be notified if the user changes location preference
-//        switch status {
-//        case .Authorized, .AuthorizedWhenInUse:
-//            manager.startUpdatingLocation()
-//            mapView.showsUserLocation = true
-//        default: break
-//        }
-//    }
+    
+    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        
+        // Be notified if the user changes location preference
+        if status == .AuthorizedAlways || status == .AuthorizedWhenInUse {
 
+            manager.startUpdatingLocation()
+            //self.setUpManager()
+        }
+    }
+    
     
     func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
         // Don't know if I need this.

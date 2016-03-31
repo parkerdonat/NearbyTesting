@@ -19,13 +19,15 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //LocationController.sharedInstance.setUpManager()
-        
-        self.mapView.delegate = self
-        mapView.showsUserLocation = true
+        LocationController.sharedInstance.setUpManager()
         
         let createAnnotation = UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognizer))
         self.view.addGestureRecognizer(createAnnotation)
+        
+        
+        self.mapView.delegate = self
+        mapView.showsUserLocation = true
+        self.mapView.setUserTrackingMode(MKUserTrackingMode.Follow, animated: true);
     }
     
     
@@ -34,7 +36,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     func tapGestureRecognizer(tapGestureRecognizer: UITapGestureRecognizer) {
         print("Tap Gesture Recognized!")
         
-        LocationController.sharedInstance.locationManager?.requestAlwaysAuthorization()
+        //LocationController.sharedInstance.locationManager?.requestAlwaysAuthorization()
         
         // Delete previous annotations so only one pin exists on the map at one time
         mapView.removeAnnotations(mapView.annotations)
@@ -189,6 +191,15 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     //MARK: - MapView Helper Functions
     
+    func listenForNotification() {
+        let nc = NSNotificationCenter.defaultCenter()
+        nc.addObserver(self, selector: #selector(alertViewController), name: AlarmPinNotification, object: nil)
+    }
+    
+    func alertViewController(notification: NSNotification) {
+        print("Presented alert view controller")
+    }
+    
     // CL requires each geofence to be be represented as a CLCircularRegion before it can be registered for monitoring.
     func regionWithAlarmPin(alarmPin: AlarmPin) -> CLCircularRegion {
         
@@ -289,9 +300,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
 
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         
+        print("Authorization was changed")
         // Be notified if the user changes location preference
         switch status {
-        case .Authorized, .AuthorizedWhenInUse:
+        case .AuthorizedAlways, .AuthorizedWhenInUse:
             manager.startUpdatingLocation()
             mapView.showsUserLocation = true
         default: break
@@ -300,7 +312,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // Show user's location on map as blue dot
-        mapView.showsUserLocation = true
+        //mapView.showsUserLocation = true
         
         // Draws the map for the current location
         let location = locations.last! as CLLocation
