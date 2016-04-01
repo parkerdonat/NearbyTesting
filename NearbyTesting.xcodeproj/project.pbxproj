@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		DD5119191CA32C1B00B6EC51 /* AlarmPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5119181CA32C1B00B6EC51 /* AlarmPin.swift */; };
+		DD9A0FE61CAF0F920099006B /* MyPinsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD9A0FE51CAF0F920099006B /* MyPinsTableViewController.swift */; };
+		DD9A0FE81CAF0FAB0099006B /* AlarmSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD9A0FE71CAF0FAB0099006B /* AlarmSettingsTableViewController.swift */; };
 		DDDB66E91CA1DFD200124D06 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB66E81CA1DFD200124D06 /* AppDelegate.swift */; };
 		DDDB66EB1CA1DFD200124D06 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB66EA1CA1DFD200124D06 /* ViewController.swift */; };
 		DDDB66EE1CA1DFD200124D06 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DDDB66EC1CA1DFD200124D06 /* Main.storyboard */; };
@@ -21,6 +23,8 @@
 
 /* Begin PBXFileReference section */
 		DD5119181CA32C1B00B6EC51 /* AlarmPin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlarmPin.swift; sourceTree = "<group>"; };
+		DD9A0FE51CAF0F920099006B /* MyPinsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyPinsTableViewController.swift; sourceTree = "<group>"; };
+		DD9A0FE71CAF0FAB0099006B /* AlarmSettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlarmSettingsTableViewController.swift; sourceTree = "<group>"; };
 		DDDB66E51CA1DFD200124D06 /* NearbyTesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NearbyTesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDDB66E81CA1DFD200124D06 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DDDB66EA1CA1DFD200124D06 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -70,6 +74,8 @@
 				DDDB66E81CA1DFD200124D06 /* AppDelegate.swift */,
 				DDDB66EA1CA1DFD200124D06 /* ViewController.swift */,
 				DD5119181CA32C1B00B6EC51 /* AlarmPin.swift */,
+				DD9A0FE71CAF0FAB0099006B /* AlarmSettingsTableViewController.swift */,
+				DD9A0FE51CAF0F920099006B /* MyPinsTableViewController.swift */,
 				DDDB66FA1CA1EA8F00124D06 /* LocationController.swift */,
 				DDDB66EC1CA1DFD200124D06 /* Main.storyboard */,
 				DDDB66EF1CA1DFD200124D06 /* Assets.xcassets */,
@@ -167,7 +173,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD9A0FE81CAF0FAB0099006B /* AlarmSettingsTableViewController.swift in Sources */,
 				DDDB66EB1CA1DFD200124D06 /* ViewController.swift in Sources */,
+				DD9A0FE61CAF0F920099006B /* MyPinsTableViewController.swift in Sources */,
 				DDDB66FB1CA1EA8F00124D06 /* LocationController.swift in Sources */,
 				DDDB66E91CA1DFD200124D06 /* AppDelegate.swift in Sources */,
 				DD5119191CA32C1B00B6EC51 /* AlarmPin.swift in Sources */,

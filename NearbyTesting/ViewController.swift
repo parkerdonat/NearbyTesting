@@ -15,7 +15,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     @IBOutlet var mapView: MKMapView!
     let annotation = MKPointAnnotation()
     var locationManager = CLLocationManager()
-    var annotationView: MKPinAnnotationView!
+    //var annotationView: MKPinAnnotationView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,7 +45,6 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         self.view.addGestureRecognizer(createAnnotation)
         
     }
-    
     
     
     //MARK: - Drop a NEW PIN
