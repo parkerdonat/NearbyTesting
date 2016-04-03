@@ -10,12 +10,21 @@ import UIKit
 import MapKit
 import CoreLocation
 
+protocol HandleMapSearch {
+    func dropPinZoomIn(placemark:MKPlacemark)
+}
+
 class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
     
     @IBOutlet var mapView: MKMapView!
     let annotation = MKPointAnnotation()
     var locationManager = CLLocationManager()
-    //var annotationView: MKPinAnnotationView!
+    var annotationCallout: MKPinAnnotationView!
+    
+    
+    // Search
+    var resultSearchController: UISearchController? = nil
+    var selectedPin:MKPlacemark? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,11 +39,11 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             locationManager.startUpdatingLocation()
         }
         
-//        
-//        locationManager = CLLocationManager()
-//        locationManager.delegate = self
-//        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-//        locationManager.startUpdatingLocation()
+        //
+        //        locationManager = CLLocationManager()
+        //        locationManager.delegate = self
+        //        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        //        locationManager.startUpdatingLocation()
         
         self.mapView.delegate = self
         mapView.showsUserLocation = true
@@ -43,6 +52,20 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
         let createAnnotation = UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognizer))
         self.view.addGestureRecognizer(createAnnotation)
+        
+        // SearchBar Stuff
+        let searchTableView = storyboard!.instantiateViewControllerWithIdentifier("SearchTableViewController") as! SearchTableViewController
+        resultSearchController = UISearchController(searchResultsController: searchTableView)
+        resultSearchController?.searchResultsUpdater = searchTableView
+        let searchBar = resultSearchController!.searchBar
+        searchBar.sizeToFit()
+        searchBar.placeholder = "Search Address or Location"
+        navigationItem.titleView = resultSearchController?.searchBar
+        resultSearchController?.hidesNavigationBarDuringPresentation = false
+        resultSearchController?.dimsBackgroundDuringPresentation = true
+        definesPresentationContext = true
+        searchTableView.mapView = mapView
+        searchTableView.handleMapSearchDelegate = self
         
     }
     
@@ -65,6 +88,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         annotation.title = "New Pin"
         annotation.subtitle = "Sweet Annotation Bruh!"
         mapView.addAnnotation(annotation)
+        
         
         // Create circle with the Pin
         let fenceDistance: CLLocationDistance = 3000
@@ -126,7 +150,6 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     }
     
     
-    
     // MARK: - MKMapView Delegate Methods
     
     func mapView(mapView: MKMapView, rendererForOverlay overlay: MKOverlay) -> MKOverlayRenderer {
@@ -150,28 +173,38 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         }
         
         let reuseID = "pin"
-        var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseID) as? MKPinAnnotationView
+        var view = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseID) as? MKPinAnnotationView
         
-        if pinView == nil {
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
-            pinView!.canShowCallout = true
-            pinView?.animatesDrop = true
-            pinView?.pinTintColor = UIColor.redColor()
+        if view == nil {
+            view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
+            view!.rightCalloutAccessoryView = UIButton(type: UIButtonType.DetailDisclosure) as UIView
+            view!.canShowCallout = true
+            view!.animatesDrop = true
+            view!.draggable = true
+            view!.pinTintColor = UIColor.redColor()
             
             // Add detail button to right callout
-            let calloutButton = UIButton.init(type: .DetailDisclosure) as UIButton
-            pinView!.rightCalloutAccessoryView = calloutButton
+            // let calloutButton = UIButton.init(type: .DetailDisclosure) as UIButton
+            // annotationCallout.rightCalloutAccessoryView = calloutButton
+            // //pinView?.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure) as UIView
+            // //self.view.addSubview(calloutButton)
+            
         }
         else {
-            pinView!.annotation = annotation
+            view!.annotation = annotation
+            view!.canShowCallout = true
         }
-    
-        return pinView
+        
+        return view
     }
     
     func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         // Segue to editAlarm details
         print("Callout was tapped!")
+        
+        if control == view.rightCalloutAccessoryView {
+            performSegueWithIdentifier("toSettings", sender: view)
+        }
     }
     
     func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, didChangeDragState newState: MKAnnotationViewDragState, fromOldState oldState: MKAnnotationViewDragState) {
@@ -263,7 +296,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // Show user's location on map as blue dot
         mapView.showsUserLocation = true
-
+        
         // Draws the map for the current location
         let location = locations.last
         let center = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude)
@@ -318,7 +351,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         print("Authorized!")
         
         //print("Hey, you turned off your navigation for this app. That means you won't be able to make alarms")
-
+        
     }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
@@ -326,4 +359,82 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     }
     
 }
+
+
+extension ViewController: HandleMapSearch {
+    func dropPinZoomIn(placemark: MKPlacemark) {
+        // clear existing pins
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.removeOverlays(mapView.overlays)
+        
+        //        // cache the pin
+        //        selectedPin = placemark
+        
+        //let annotation = MKPointAnnotation()
+        annotation.coordinate = placemark.coordinate
+        annotation.title = placemark.name
+        // annotation.title = "New Pin"
+        // annotation.subtitle = "Sweet Annotation Bruh!"
+        if let city = placemark.locality,
+            let state = placemark.administrativeArea {
+            annotation.subtitle = "\(city), \(state)"
+        }
+        mapView.addAnnotation(annotation)
+        
+        // Create circle with the Pin
+        let fenceDistance: CLLocationDistance = 3000
+        let circle = MKCircle(centerCoordinate: placemark.coordinate, radius: fenceDistance)
+        let circleRenderer = MKCircleRenderer(overlay: circle)
+        circleRenderer.lineWidth = 3.0
+        circleRenderer.strokeColor = UIColor.purpleColor()
+        circleRenderer.fillColor = UIColor.purpleColor().colorWithAlphaComponent(0.4)
+        
+        // Creates the span and animated zoomed into an area
+        let span = MKCoordinateSpanMake(0.1, 0.1)
+        let region = MKCoordinateRegionMake(placemark.coordinate, span)
+        mapView.setRegion(region, animated: true)
+        mapView.addOverlay(circle)
+        
+        // Add an alarm pin
+        let alarm = AlarmPin(coordinate: placemark.coordinate, radius: fenceDistance, identifier: "")
+        addAlarmPin(alarm)
+        startMonitoringAlarmPin(alarm)
+        
+    }
+    
+}
+
+/*
+ // Delete previous annotations so only one pin exists on the map at one time
+ mapView.removeAnnotations(mapView.annotations)
+ mapView.removeOverlays(mapView.overlays)
+ 
+ let touchPoint = tapGestureRecognizer.locationInView(self.mapView)
+ let newCoordinate: CLLocationCoordinate2D = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
+ 
+ // Callout Annotation
+ annotation.coordinate = newCoordinate
+ annotation.title = "New Pin"
+ annotation.subtitle = "Sweet Annotation Bruh!"
+ mapView.addAnnotation(annotation)
+ 
+ // Create circle with the Pin
+ let fenceDistance: CLLocationDistance = 3000
+ let circle = MKCircle(centerCoordinate: newCoordinate, radius: fenceDistance)
+ let circleRenderer = MKCircleRenderer(overlay: circle)
+ circleRenderer.lineWidth = 3.0
+ circleRenderer.strokeColor = UIColor.purpleColor()
+ circleRenderer.fillColor = UIColor.purpleColor().colorWithAlphaComponent(0.4)
+ 
+ // Creates the span and animated zoomed into an area
+ let span = MKCoordinateSpanMake(0.1, 0.1)
+ let region = MKCoordinateRegion(center: newCoordinate, span: span)
+ mapView.setRegion(region, animated: true)
+ mapView.addOverlay(circle)
+ 
+ // Add an alarm pin
+ let alarm = AlarmPin(coordinate: newCoordinate, radius: fenceDistance, identifier: "")
+ addAlarmPin(alarm)
+ startMonitoringAlarmPin(alarm)
+ */
 
