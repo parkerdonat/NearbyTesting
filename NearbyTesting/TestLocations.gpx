@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <gpx version="1.1" creator="Xcode">
-    <wpt lat="40.760779" lon="-111.891047">
-         <name>SLC</name>
+    <wpt lat="40.889390" lon="-111.880771">
+         <name>Bountiful</name>
     </wpt>
-    <wpt lat="40.848556" lon="-111.906882">
-         <name>Provo</name>
+    <wpt lat="41.223000" lon="-111.973830">
+         <name>Ogden</name>
     </wpt>
 </gpx>

@@ -111,6 +111,11 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
     }
     
+    
+    @IBAction func centerMapOnUserButtonClicked(sender: AnyObject) {
+        //mapView.setUserTrackingMode(MKUserTrackingMode.Follow, animated: true)
+    }
+    
     // MARK: To update view with model
     
     func addAlarmPin(alarmPin: AlarmPin) {

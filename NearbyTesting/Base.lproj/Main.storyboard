@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="2IG-Mk-8W4">
-                                <rect key="frame" x="0.0" y="64" width="600" height="492"/>
+                                <rect key="frame" x="0.0" y="20" width="600" height="536"/>
                             </mapView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -31,13 +31,19 @@
                         </constraints>
                     </view>
                     <toolbarItems>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="QDJ-5M-Eus"/>
-                        <barButtonItem title="My Pins" id="nac-ga-awf">
+                        <barButtonItem image="CurrentLocation" id="Rb6-AQ-b89">
                             <connections>
-                                <segue destination="OWV-UN-ULG" kind="presentation" id="Whg-Q5-P04"/>
+                                <action selector="centerMapOnUserButtonClicked:" destination="PYh-c3-qvT" id="ayG-fG-lR9"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="kWL-6P-N0n"/>
+                        <barButtonItem title="Saved Alarms" id="nac-ga-awf">
+                            <connections>
+                                <segue destination="OWV-UN-ULG" kind="presentation" identifier="toSavedPinsList" id="Whg-Q5-P04"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="thZ-qI-BoI"/>
+                        <barButtonItem id="1lN-vU-3Yg"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Tap to Add Pin" id="no5-d1-MjC"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
@@ -66,6 +72,9 @@
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="PYh-c3-qvT" kind="show" identifier="toPinOnMap" id="j2T-nG-uCy"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -98,7 +107,7 @@
                             <tableViewSection headerTitle="Alarm Name" id="pQ5-rN-vXI">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="X0L-Xj-n6I">
-                                        <rect key="frame" x="0.0" y="114" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="50" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="X0L-Xj-n6I" id="ETv-fq-Wps">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -122,7 +131,7 @@
                             <tableViewSection headerTitle="Enable Alarm" id="hzF-RT-Ora">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="47i-tX-EhH">
-                                        <rect key="frame" x="0.0" y="209" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="145" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="47i-tX-EhH" id="dBv-eB-uLX">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -155,7 +164,7 @@
                             <tableViewSection headerTitle="Set Sound" id="4Tn-xV-2sv">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="81k-dj-O74">
-                                        <rect key="frame" x="0.0" y="304" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="240" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="81k-dj-O74" id="mc2-x7-Yy7">
                                             <rect key="frame" x="0.0" y="0.0" width="567" height="43"/>
@@ -183,7 +192,7 @@
                             <tableViewSection headerTitle="Vibrate" id="Nb2-rF-8jk">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="p3i-8a-W2s">
-                                        <rect key="frame" x="0.0" y="399" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="335" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="p3i-8a-W2s" id="OF8-8w-Oyt">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -216,7 +225,7 @@
                             <tableViewSection headerTitle="Delete" id="ffn-qW-jfs">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="R0R-RE-Cgl">
-                                        <rect key="frame" x="0.0" y="494" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="430" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="R0R-RE-Cgl" id="NyM-N7-VjY">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -352,4 +361,10 @@
             <point key="canvasLocation" x="1897" y="448"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="CurrentLocation" width="15" height="15"/>
+    </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="j2T-nG-uCy"/>
+    </inferredMetricsTieBreakers>
 </document>
