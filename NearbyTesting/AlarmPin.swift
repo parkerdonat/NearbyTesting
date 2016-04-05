@@ -10,6 +10,8 @@ import UIKit
 import MapKit
 import CoreLocation
 
+
+
 class AlarmPin: NSObject, MKAnnotation {
     
     var coordinate: CLLocationCoordinate2D

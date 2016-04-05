@@ -20,6 +20,8 @@
 		DDDB66FD1CA1F7BC00124D06 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDDB66FC1CA1F7BC00124D06 /* MapKit.framework */; };
 		DDDB66FF1CA1F7C700124D06 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDDB66FE1CA1F7C700124D06 /* CoreLocation.framework */; };
 		DDEED80C1CA59F8F002A926C /* TestLocations.gpx in Resources */ = {isa = PBXBuildFile; fileRef = DDEED80B1CA59F8F002A926C /* TestLocations.gpx */; };
+		DDF18D9F1CB410770077A2A7 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DDF18D9D1CB410770077A2A7 /* Model.xcdatamodeld */; };
+		DDF18DA11CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF18DA01CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +40,8 @@
 		DDDB66FC1CA1F7BC00124D06 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		DDDB66FE1CA1F7C700124D06 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		DDEED80B1CA59F8F002A926C /* TestLocations.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TestLocations.gpx; sourceTree = "<group>"; };
+		DDF18D9E1CB410770077A2A7 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		DDF18DA01CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AlarmPin+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +77,7 @@
 		DDDB66E71CA1DFD200124D06 /* NearbyTesting */ = {
 			isa = PBXGroup;
 			children = (
+				DDF18DA01CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift */,
 				DDDB66E81CA1DFD200124D06 /* AppDelegate.swift */,
 				DDDB66EA1CA1DFD200124D06 /* ViewController.swift */,
 				DD5119181CA32C1B00B6EC51 /* AlarmPin.swift */,
@@ -81,6 +86,7 @@
 				DDDB66FA1CA1EA8F00124D06 /* LocationController.swift */,
 				DD9A0FEB1CAF2A4E0099006B /* SearchTableViewController.swift */,
 				DDDB66EC1CA1DFD200124D06 /* Main.storyboard */,
+				DDF18D9D1CB410770077A2A7 /* Model.xcdatamodeld */,
 				DDDB66EF1CA1DFD200124D06 /* Assets.xcassets */,
 				DDDB66F11CA1DFD200124D06 /* LaunchScreen.storyboard */,
 				DDDB66F41CA1DFD200124D06 /* Info.plist */,
@@ -177,8 +183,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD9A0FE81CAF0FAB0099006B /* AlarmSettingsTableViewController.swift in Sources */,
+				DDF18DA11CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift in Sources */,
 				DDDB66EB1CA1DFD200124D06 /* ViewController.swift in Sources */,
 				DD9A0FE61CAF0F920099006B /* MyPinsTableViewController.swift in Sources */,
+				DDF18D9F1CB410770077A2A7 /* Model.xcdatamodeld in Sources */,
 				DD9A0FEC1CAF2A4E0099006B /* SearchTableViewController.swift in Sources */,
 				DDDB66FB1CA1EA8F00124D06 /* LocationController.swift in Sources */,
 				DDDB66E91CA1DFD200124D06 /* AppDelegate.swift in Sources */,
@@ -335,6 +343,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		DDF18D9D1CB410770077A2A7 /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				DDF18D9E1CB410770077A2A7 /* Model.xcdatamodel */,
+			);
+			currentVersion = DDF18D9E1CB410770077A2A7 /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = DDDB66DD1CA1DFD200124D06 /* Project object */;
 }
