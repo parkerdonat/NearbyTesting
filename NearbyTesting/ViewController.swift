@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import CoreLocation
+import CoreData
 
 protocol HandleMapSearch {
     func dropPinZoomIn(placemark:MKPlacemark)
@@ -105,7 +106,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         mapView.addOverlay(circle)
         
         // Add an alarm pin
-        let alarm = AlarmPin(coordinate: newCoordinate, radius: fenceDistance, identifier: "")
+        let alarm = AlarmPin(alarmName: "Hello", longitude: newCoordinate.longitude, latitude: newCoordinate.latitude, radius: fenceDistance)
+       //let alarm = AlarmPin(coordinate: newCoordindate, radius: fenceDistance, identifier: "")
+        let coordinate = CLLocationCoordinate2D(latitude: alarm.latitude as! Double, longitude: alarm.longitude as! Double)
+        print(coordinate)
         addAlarmPin(alarm)
         startMonitoringAlarmPin(alarm)
         
@@ -135,7 +139,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     func addRadiusOverlayForAlarmPin(alarmPin: AlarmPin) {
         // add mapView with MKCircle coordinate and radius
-        mapView?.addOverlay(MKCircle(centerCoordinate: alarmPin.coordinate, radius: alarmPin.radius))
+        let coordinate = CLLocationCoordinate2D(latitude: alarmPin.latitude as! Double, longitude: alarmPin.longitude as! Double)
+
+        mapView?.addOverlay(MKCircle(centerCoordinate: coordinate, radius: Double(alarmPin.radius!)))
     }
     
     func removeRadiusOverlayForAlarmPin(alarmPin: AlarmPin) {
@@ -237,7 +243,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     func regionWithAlarmPin(alarmPin: AlarmPin) -> CLCircularRegion {
         
         // create the region to show with AlarmPin
-        let region = CLCircularRegion(center: alarmPin.coordinate, radius: alarmPin.radius, identifier: alarmPin.identifier)
+        let coordinate = CLLocationCoordinate2D(latitude: alarmPin.latitude as! Double, longitude: alarmPin.longitude as! Double)
+
+        let region = CLCircularRegion(center: coordinate, radius: Double(alarmPin.radius!), identifier: alarmPin.alarmName!)
         region.notifyOnEntry = true
         
         return region
@@ -291,7 +299,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     func stopMonitoringAlarmPin(alarmPin: AlarmPin) {
         for region in locationManager.monitoredRegions {
             if let circularRegion = region as? CLCircularRegion {
-                if circularRegion.identifier == alarmPin.identifier {
+                if circularRegion.identifier == alarmPin.alarmName! {
                     locationManager.stopMonitoringForRegion(circularRegion)
                 }
             }
@@ -401,11 +409,33 @@ extension ViewController: HandleMapSearch {
         mapView.addOverlay(circle)
         
         // Add an alarm pin
-        let alarm = AlarmPin(coordinate: placemark.coordinate, radius: fenceDistance, identifier: "")
+        let alarm = AlarmPin(alarmName: "Hello", longitude: placemark.coordinate.longitude, latitude: placemark.coordinate.latitude, radius: fenceDistance)
+
+        //let alarm = AlarmPin(coordinate: placemark.coordinate, radius: fenceDistance, identifier: "")
         addAlarmPin(alarm)
         startMonitoringAlarmPin(alarm)
         
     }
+    
+    // MARK: - PinController - TO DO MAKE AN ALARM CONTROLLER
+    
+    func fetchAllPins() -> [AlarmPin] {
+        
+        // Create the Fetch Request
+        let fetchRequest = NSFetchRequest(entityName: "AlarmPin")
+        // Execute the Fetch Request
+        let results: [AnyObject]?
+        do {
+            results = try Stack.sharedStack.managedObjectContext.executeFetchRequest(fetchRequest)
+        } catch {
+            results = nil
+        }
+        // Check for Errors
+        
+        // Return the results, cast to an array of Pin objects
+        return results as! [AlarmPin]
+    }
+
     
 }
 

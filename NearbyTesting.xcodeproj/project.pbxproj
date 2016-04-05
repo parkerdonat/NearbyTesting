@@ -22,6 +22,7 @@
 		DDEED80C1CA59F8F002A926C /* TestLocations.gpx in Resources */ = {isa = PBXBuildFile; fileRef = DDEED80B1CA59F8F002A926C /* TestLocations.gpx */; };
 		DDF18D9F1CB410770077A2A7 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DDF18D9D1CB410770077A2A7 /* Model.xcdatamodeld */; };
 		DDF18DA11CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF18DA01CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift */; };
+		DDF18DA31CB425B00077A2A7 /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF18DA21CB425B00077A2A7 /* Stack.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		DDEED80B1CA59F8F002A926C /* TestLocations.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TestLocations.gpx; sourceTree = "<group>"; };
 		DDF18D9E1CB410770077A2A7 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		DDF18DA01CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AlarmPin+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		DDF18DA21CB425B00077A2A7 /* Stack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,15 +79,16 @@
 		DDDB66E71CA1DFD200124D06 /* NearbyTesting */ = {
 			isa = PBXGroup;
 			children = (
-				DDF18DA01CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift */,
+				DDDB66EC1CA1DFD200124D06 /* Main.storyboard */,
 				DDDB66E81CA1DFD200124D06 /* AppDelegate.swift */,
 				DDDB66EA1CA1DFD200124D06 /* ViewController.swift */,
+				DDF18DA01CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift */,
 				DD5119181CA32C1B00B6EC51 /* AlarmPin.swift */,
 				DD9A0FE71CAF0FAB0099006B /* AlarmSettingsTableViewController.swift */,
 				DD9A0FE51CAF0F920099006B /* MyPinsTableViewController.swift */,
 				DDDB66FA1CA1EA8F00124D06 /* LocationController.swift */,
 				DD9A0FEB1CAF2A4E0099006B /* SearchTableViewController.swift */,
-				DDDB66EC1CA1DFD200124D06 /* Main.storyboard */,
+				DDF18DA21CB425B00077A2A7 /* Stack.swift */,
 				DDF18D9D1CB410770077A2A7 /* Model.xcdatamodeld */,
 				DDDB66EF1CA1DFD200124D06 /* Assets.xcassets */,
 				DDDB66F11CA1DFD200124D06 /* LaunchScreen.storyboard */,
@@ -188,6 +191,7 @@
 				DD9A0FE61CAF0F920099006B /* MyPinsTableViewController.swift in Sources */,
 				DDF18D9F1CB410770077A2A7 /* Model.xcdatamodeld in Sources */,
 				DD9A0FEC1CAF2A4E0099006B /* SearchTableViewController.swift in Sources */,
+				DDF18DA31CB425B00077A2A7 /* Stack.swift in Sources */,
 				DDDB66FB1CA1EA8F00124D06 /* LocationController.swift in Sources */,
 				DDDB66E91CA1DFD200124D06 /* AppDelegate.swift in Sources */,
 				DD5119191CA32C1B00B6EC51 /* AlarmPin.swift in Sources */,
