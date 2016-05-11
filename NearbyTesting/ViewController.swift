@@ -30,21 +30,12 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //locationManager = CLLocationManager()
-        //locationManager.requestWhenInUseAuthorization()
-        
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.requestLocation()
             locationManager.startUpdatingLocation()
         }
-        
-        //
-        //        locationManager = CLLocationManager()
-        //        locationManager.delegate = self
-        //        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        //        locationManager.startUpdatingLocation()
         
         self.mapView.delegate = self
         mapView.showsUserLocation = true
@@ -73,6 +64,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     //MARK: - Drop a NEW PIN
     func tapGestureRecognizer(tapGestureRecognizer: UITapGestureRecognizer) {
+        
         print("Tap Gesture Recognized!")
         
         locationManager.requestAlwaysAuthorization()
@@ -84,21 +76,16 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         let touchPoint = tapGestureRecognizer.locationInView(self.mapView)
         let newCoordinate: CLLocationCoordinate2D = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
         
-        // Callout Annotation
+        // Pin Annotation
         annotation.coordinate = newCoordinate
-        annotation.title = "New Pin"
-        annotation.subtitle = "Sweet Annotation Bruh!"
         mapView.addAnnotation(annotation)
         
         
         // Create circle with the Pin
         let fenceDistance: CLLocationDistance = 3000
         let circle = MKCircle(centerCoordinate: newCoordinate, radius: fenceDistance)
-        let circleRenderer = MKCircleRenderer(overlay: circle)
-        circleRenderer.lineWidth = 3.0
-        circleRenderer.strokeColor = UIColor.purpleColor()
-        circleRenderer.fillColor = UIColor.purpleColor().colorWithAlphaComponent(0.4)
-        
+        //let circleRenderer = MKCircleRenderer(overlay: circle)
+    
         // Creates the span and animated zoomed into an area
         let span = MKCoordinateSpanMake(0.1, 0.1)
         let region = MKCoordinateRegion(center: newCoordinate, span: span)
@@ -224,8 +211,29 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     // Shows the callout with delay
     func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
-        
-        mapView.addAnnotation(annotation)
+    
+        let geoCoder = CLGeocoder()
+        let location = CLLocation(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude)
+        geoCoder.reverseGeocodeLocation(location) { (placemarks, error) in
+            let placeArray = placemarks as [CLPlacemark]!
+            var placeMark: CLPlacemark!
+            placeMark = placeArray?[0]
+            
+            // Street Address
+            if let street = placeMark.addressDictionary?["Thoroughfare"] as? String {
+                self.annotation.title = street as String
+                print(street)
+            }
+            
+            // City
+            if let city = placeMark.addressDictionary?["City"] as? String {
+                self.annotation.subtitle = city as String
+            }
+        }
+
+        annotation.title = "Unknown Street"
+        annotation.subtitle = "Unknown City"
+        //mapView.addAnnotation(annotation)
         performSelector(#selector(selectAnnotation), withObject: annotation, afterDelay: 0.5)
         
     }
@@ -435,8 +443,6 @@ extension ViewController: HandleMapSearch {
         // Return the results, cast to an array of Pin objects
         return results as! [AlarmPin]
     }
-
-    
 }
 
 /*
