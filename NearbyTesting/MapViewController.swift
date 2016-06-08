@@ -22,7 +22,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     let annotation = MKPointAnnotation()
     var locationManager = CLLocationManager()
     var annotationCallout: MKPinAnnotationView!
-    var alarmPin: AlarmPin?
+    var alarmPin: AlarmPin!
     
     // Search
     var resultSearchController: UISearchController? = nil
@@ -99,18 +99,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         mapView.addOverlay(circle)
         
         // Add an alarm pin
-        let alarm = AlarmPin(alarmName: "Unkown Street", longitude: newCoordinate.longitude, latitude: newCoordinate.latitude, radius: fenceDistance)
-        let coordinate = CLLocationCoordinate2D(latitude: alarm.latitude as Double, longitude: alarm.longitude as Double)
-        print(coordinate)
+        let alarm = AlarmPin(alarmName: "Unkown", longitude: newCoordinate.longitude, latitude: newCoordinate.latitude, radius: fenceDistance)
+        //let coordinate = CLLocationCoordinate2D(latitude: alarm.latitude as Double, longitude: alarm.longitude as Double)
         addAlarmPin(alarm)
-        
-        if alarmPin?.enabled == true {
-            startMonitoringAlarmPin(alarm)
-        } else {
-            if let alarmPined = alarmPin {
-                stopMonitoringAlarmPin(alarmPined)
-            }
-        }
         
         AlarmController.sharedInstance.addAlarm(alarm)
         alarmPin = alarm
@@ -127,13 +118,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         addRadiusOverlayForAlarmPin(alarmPin)
         if alarmPin.enabled == true {
             startMonitoringAlarmPin(alarmPin)
-        } else {
-            stopMonitoringAlarmPin(alarmPin)
         }
     }
     
     func removeAlarmPin(alarmPin: AlarmPin) {
         removeRadiusOverlayForAlarmPin(alarmPin)
+        stopMonitoringAlarmPin(alarmPin)
     }
     
     // Updates with saved pin
@@ -188,6 +178,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     // MARK: - MKMapView Delegate Methods
     
+    func mapViewDidFinishLoadingMap(mapView: MKMapView) {
+        for currentAnnotation in mapView.annotations {
+            if currentAnnotation.isEqual(self.alarmPin) {
+                mapView.selectAnnotation(currentAnnotation, animated: true)
+            }
+        }
+    }
+    
     func mapView(mapView: MKMapView, rendererForOverlay overlay: MKOverlay) -> MKOverlayRenderer {
         // Modify Circle attributes here
         
@@ -220,9 +218,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         let reuseID = "pin"
         annotationCallout = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseID) as? MKPinAnnotationView
-        
-        alarmPin?.enabled = false
-        
+                
         if alarmPin?.enabled == true {
             if annotationCallout == nil {
                 annotationCallout = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
@@ -231,7 +227,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 annotationCallout!.animatesDrop = true
                 annotationCallout!.pinTintColor = UIColor(red:0.00, green:0.48, blue:0.00, alpha:1.0)
             }
-            
         } else {
             if annotationCallout == nil {
                 annotationCallout = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
@@ -268,31 +263,32 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             var placeMark: CLPlacemark!
             placeMark = placeArray?[0]
             
-            // Street Address
-            if let street = placeMark.addressDictionary?["Thoroughfare"] as? String {
-                self.annotation.title = street as String
-                print(street)
-                
-                // TODO - UPDATE MODEL'S ALARM NAME WITH ANNOTATION TITLE
-                guard let pin = self.alarmPin, annotationTitle = self.annotation.title else { return }
-                AlarmController.sharedInstance.updateAlarm(annotationTitle, alarm: pin)
-            }
             
-            //            // City
-            //            if let city = placeMark.addressDictionary?["City"] as? String {
-            //                self.annotation.subtitle = city as String
-            //            }
-        }
+                if let street = placeMark.addressDictionary?["Thoroughfare"] as? String {
+                    self.annotation.title = street as String
+                    print(street)
+                    
+                    // TODO - UPDATE MODEL'S ALARM NAME WITH ANNOTATION TITLE
+                    guard let pin = self.alarmPin, annotationTitle = self.annotation.title else { return }
         
-        if self.annotation.title == nil {
-            annotation.title = "Unknown Street"
-            //annotation.subtitle = "Unknown City"
-            guard let pin = self.alarmPin, annotationTitle = self.annotation.title else { return }
-            AlarmController.sharedInstance.updateAlarm(annotationTitle, alarm: pin)
-            print(annotation.title)
+                    AlarmController.sharedInstance.updateAlarmTitle(annotationTitle, alarm: pin)
+                    
+                    self.performSelector(#selector(self.selectAnnotation), withObject: self.annotation, afterDelay: 0.5)
+                }
         }
-        
-        self.performSelector(#selector(selectAnnotation), withObject: annotation, afterDelay: 0.5)
+//            // Street Address
+//            if (self.alarmPin != nil) {
+//                self.annotation.title = self.alarmPin?.alarmName
+//            } else {
+//                if let street = placeMark.addressDictionary?["Thoroughfare"] as? String {
+//                    self.annotation.title = street as String
+//                    print(street)
+//                    
+//                    // TODO - UPDATE MODEL'S ALARM NAME WITH ANNOTATION TITLE
+//                    guard let pin = self.alarmPin, annotationTitle = self.annotation.title else { return }
+//                    AlarmController.sharedInstance.updateAlarmTitle(annotationTitle, alarm: pin)
+//                }
+//            }
     }
     
     // Shows the callout with delay
@@ -300,6 +296,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         mapView.selectAnnotation(annotation, animated: true)
     }
     
+    func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
+        print("Tapped \(annotation.title)")
+        
+    }
     
     //MARK: - MapView Helper Functions
     
@@ -448,6 +448,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             guard let detailViewController = segue.destinationViewController as? AlarmSettingsTableViewController else { return }
             
             detailViewController.alarmPin = alarmPin
+        }
+    }
+    
+    override func motionBegan(motion: UIEventSubtype, withEvent event: UIEvent?) {
+        
+        if (motion == .MotionShake) {
+            print("iPhone Shake Detected")
         }
     }
 }

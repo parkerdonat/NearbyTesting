@@ -14,12 +14,12 @@ import CoreData
 
 extension AlarmPin {
 
-    @NSManaged var alarmName: String?
-    @NSManaged var vibrate: NSNumber?
-    @NSManaged var sound: NSNumber?
-    @NSManaged var longitude: NSNumber?
-    @NSManaged var latitude: NSNumber?
-    @NSManaged var enabled: NSNumber?
-    @NSManaged var radius: NSNumber?
+    @NSManaged var alarmName: String
+    @NSManaged var vibrate: NSNumber
+    @NSManaged var sound: NSNumber
+    @NSManaged var longitude: NSNumber
+    @NSManaged var latitude: NSNumber
+    @NSManaged var enabled: NSNumber
+    @NSManaged var radius: NSNumber
 
 }

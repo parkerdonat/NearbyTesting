@@ -15,15 +15,14 @@ import CoreData
 @objc(AlarmPin)
 class AlarmPin: NSManagedObject, MKAnnotation {
     
-    
-    convenience init(alarmName: String, longitude: Double, latitude: Double, radius: Double, context: NSManagedObjectContext = Stack.sharedStack.managedObjectContext) {
+    convenience init(alarmName: String, longitude: Double = 0.0, latitude: Double = 0.0, radius: Double = 0.0, context: NSManagedObjectContext = Stack.sharedStack.managedObjectContext) {
         
         let entity = NSEntityDescription.entityForName("AlarmPin", inManagedObjectContext: context)!
         
         self.init(entity: entity, insertIntoManagedObjectContext: context)
         
         self.alarmName = alarmName
-        self.enabled = true
+        self.enabled = false
         self.vibrate = true
         self.sound = true
         
@@ -35,7 +34,7 @@ class AlarmPin: NSManagedObject, MKAnnotation {
     }
     //returning the coordinate so as to conform to MKAnnotation protocol
     var coordinate: CLLocationCoordinate2D {
-        return CLLocationCoordinate2D(latitude: latitude as! Double, longitude: longitude as! Double)
+        return CLLocationCoordinate2D(latitude: latitude as Double, longitude: longitude as Double)
     }
     
 }

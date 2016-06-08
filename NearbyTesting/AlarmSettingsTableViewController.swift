@@ -7,36 +7,104 @@
 //
 
 import UIKit
+import MediaPlayer
 
-class AlarmSettingsTableViewController: UITableViewController {
-
+class AlarmSettingsTableViewController: UITableViewController, MPMediaPickerControllerDelegate {
+    
+    var alarmPin: AlarmPin?
+    
+    @IBOutlet weak var alarmNameTextField: UITextField!
+    @IBOutlet var switchEnabled: UISwitch!
+    @IBOutlet var switchVibrate: UISwitch!
+    //    @IBOutlet var setMusicCell : UITableViewCell!
+    @IBOutlet var setMusicCell: UITableViewCell!
+    
+    
     @IBAction func saveButtonTapped(sender: AnyObject) {
         // Update Pin
+        let alarm = updateAlarm()
         navigationController?.popViewControllerAnimated(true)
+        (navigationController?.viewControllers.first as? MapViewController)?.annotationFromAlarmPinSettings(alarm)
     }
+    
     @IBAction func cancelButtonTapped(sender: AnyObject) {
-        
         navigationController?.popViewControllerAnimated(true)
     }
     
     @IBAction func deleteButtonTapped(sender: AnyObject) {
         // Delete Pin
-        navigationController?.popViewControllerAnimated(true)
+        guard let alarmPin = alarmPin else { return }
+            AlarmController.sharedInstance.removePinAlarm(alarmPin)
+            navigationController?.popViewControllerAnimated(true)
     }
-
+    
+    @IBAction func enableSwitchTapped(sender: AnyObject) {
+        print("Enable Switch tapped")
+    }
+    
+    @IBAction func vibrateSwitchTapped(sender: AnyObject) {
+        print("Vibrate Switch tapped")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        
+        if let alarm = alarmPin {
+            updateViewWithAlarm(alarm)
+        }
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
+    func updateAlarm() -> AlarmPin {
+        let alarmName = alarmNameTextField.text!
+        let enabled = switchEnabled.on
+        let vibrate = switchVibrate.on
+        
+        if let alarmPin = alarmPin {
+            alarmPin.alarmName = alarmName
+            alarmPin.enabled = enabled
+            alarmPin.vibrate = vibrate
+            return alarmPin
+        } else {
+            let newAlarmPin = AlarmPin(alarmName: alarmName)
+            AlarmController.sharedInstance.addAlarm(newAlarmPin)
+            return newAlarmPin
+        }
+    }
+    
+    func updateViewWithAlarm(alarmPin: AlarmPin) {
+        self.alarmPin = alarmPin
+        alarmNameTextField.text = alarmPin.alarmName
+    }
+    
+    
+    @IBAction func userTappedView(sender: AnyObject) {
+        alarmNameTextField.resignFirstResponder()
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        let cell = tableView.cellForRowAtIndexPath(indexPath)
+        if (cell == setMusicCell) {
+            
+            let mediaPicker = MPMediaPickerController(mediaTypes: .Music)
+            mediaPicker.delegate = self
+            mediaPicker.allowsPickingMultipleItems = false
+            presentViewController(mediaPicker, animated: true, completion: {})
+        }
+    }
+    
+    func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
+        
+        self.dismissViewControllerAnimated(true, completion: {});
+    }
+    
+    func mediaPickerDidCancel(mediaPicker: MPMediaPickerController) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
 }

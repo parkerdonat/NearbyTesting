@@ -30,5 +30,4 @@ class Stack {
         
         return documentsDirectory?.URLByAppendingPathComponent("db.sqlite")
     }
-    
 }
