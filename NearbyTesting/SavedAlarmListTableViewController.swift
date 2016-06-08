@@ -1,14 +1,14 @@
 //
-//  MyPinsTableViewController.swift
+//  SavedAlarmListTableViewController.swift
 //  NearbyTesting
 //
-//  Created by Parker Donat on 4/1/16.
+//  Created by Parker Donat on 5/11/16.
 //  Copyright © 2016 Parker Donat. All rights reserved.
 //
 
 import UIKit
 
-class MyPinsTableViewController: UITableViewController {
+class SavedAlarmListTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,10 +20,6 @@ class MyPinsTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
 
-    @IBAction func cancelButtonTapped(sender: AnyObject) {
-        
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
