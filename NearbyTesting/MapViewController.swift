@@ -19,7 +19,7 @@ protocol HandleMapSearch {
 class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
     
     @IBOutlet var mapView: MKMapView!
-    let annotation = MKPointAnnotation()
+    var annotation = MKPointAnnotation()
     var locationManager = CLLocationManager()
     var annotationCallout: MKPinAnnotationView!
     var alarmPin: AlarmPin!
@@ -98,13 +98,37 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         mapView.setRegion(region, animated: true)
         mapView.addOverlay(circle)
         
-        // Add an alarm pin
-        let alarm = AlarmPin(alarmName: "Unkown", longitude: newCoordinate.longitude, latitude: newCoordinate.latitude, radius: fenceDistance)
-        //let coordinate = CLLocationCoordinate2D(latitude: alarm.latitude as Double, longitude: alarm.longitude as Double)
-        addAlarmPin(alarm)
+        let geoCoder = CLGeocoder()
+        let location = CLLocation(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude)
+        geoCoder.reverseGeocodeLocation(location) { (placemarks, error) in
+            let placeArray = placemarks as [CLPlacemark]!
+            var placeMark: CLPlacemark!
+            placeMark = placeArray?[0]
+            
+            
+            if let street = placeMark.addressDictionary?["Thoroughfare"] as? String {
+                self.annotation.title = street as String
+                print(street)
+                
+                let alarm = AlarmPin(alarmName: self.annotation.title!, longitude: newCoordinate.longitude, latitude: newCoordinate.latitude, radius: fenceDistance)
+
+                self.addAlarmPin(alarm)
+                
+                AlarmController.sharedInstance.addAlarm(alarm)
+                self.alarmPin = alarm
+                
+                self.performSelector(#selector(self.selectAnnotation), withObject: self.annotation, afterDelay: 0.5)
+            }
+        }
+
         
-        AlarmController.sharedInstance.addAlarm(alarm)
-        alarmPin = alarm
+        // Add an alarm pin
+//        let alarm = AlarmPin(alarmName: self.annotation.title!, longitude: newCoordinate.longitude, latitude: newCoordinate.latitude, radius: fenceDistance)
+//        //let coordinate = CLLocationCoordinate2D(latitude: alarm.latitude as Double, longitude: alarm.longitude as Double)
+//        addAlarmPin(alarm)
+//        
+//        AlarmController.sharedInstance.addAlarm(alarm)
+//        alarmPin = alarm
     }
     
     
@@ -132,7 +156,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
         
-        let annotation = MKPointAnnotation()
+        //let annotation = MKPointAnnotation()
         annotation.coordinate = CLLocationCoordinate2D(latitude: Double(alarmPin.latitude), longitude: Double(alarmPin.longitude))
         mapView.addAnnotation(annotation)
         
@@ -145,6 +169,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let region = MKCoordinateRegion(center: annotation.coordinate, span: span)
         mapView.setRegion(region, animated: true)
         mapView.addOverlay(circle)
+        
+        self.annotation.title = alarmPin.alarmName
         
         return mapView.annotations
     }
@@ -256,41 +282,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     // Shows the callout with delay
     func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
         
-        let geoCoder = CLGeocoder()
-        let location = CLLocation(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude)
-        geoCoder.reverseGeocodeLocation(location) { (placemarks, error) in
-            let placeArray = placemarks as [CLPlacemark]!
-            var placeMark: CLPlacemark!
-            placeMark = placeArray?[0]
-            
-            
-                if let street = placeMark.addressDictionary?["Thoroughfare"] as? String {
-                    self.annotation.title = street as String
-                    print(street)
-                    
-                    // TODO - UPDATE MODEL'S ALARM NAME WITH ANNOTATION TITLE
-                    guard let pin = self.alarmPin, annotationTitle = self.annotation.title else { return }
-        
-                    AlarmController.sharedInstance.updateAlarmTitle(annotationTitle, alarm: pin)
-                    
-                    self.performSelector(#selector(self.selectAnnotation), withObject: self.annotation, afterDelay: 0.5)
-                }
-        }
-//            // Street Address
-//            if (self.alarmPin != nil) {
-//                self.annotation.title = self.alarmPin?.alarmName
-//            } else {
-//                if let street = placeMark.addressDictionary?["Thoroughfare"] as? String {
-//                    self.annotation.title = street as String
-//                    print(street)
-//                    
-//                    // TODO - UPDATE MODEL'S ALARM NAME WITH ANNOTATION TITLE
-//                    guard let pin = self.alarmPin, annotationTitle = self.annotation.title else { return }
-//                    AlarmController.sharedInstance.updateAlarmTitle(annotationTitle, alarm: pin)
-//                }
-//            }
+        // TODO - UPDATE MODEL'S ALARM NAME WITH ANNOTATION TITLE
+        guard let pin = self.alarmPin, annotationTitle = self.annotation.title else { return }
+        AlarmController.sharedInstance.updateAlarmTitle(annotationTitle, alarm: pin)
+        self.performSelector(#selector(self.selectAnnotation), withObject: self.annotation, afterDelay: 0.5)
     }
-    
+
     // Shows the callout with delay
     func selectAnnotation(annotation: MKAnnotation) {
         mapView.selectAnnotation(annotation, animated: true)
@@ -298,7 +295,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         print("Tapped \(annotation.title)")
-        
+        self.performSelector(#selector(self.selectAnnotation), withObject: self.annotation, afterDelay: 0.5)
     }
     
     //MARK: - MapView Helper Functions
