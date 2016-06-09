@@ -9,16 +9,15 @@
 import UIKit
 import MediaPlayer
 
-class AlarmSettingsTableViewController: UITableViewController, MPMediaPickerControllerDelegate {
+class AlarmSettingsTableViewController: UITableViewController, UITextFieldDelegate, MPMediaPickerControllerDelegate {
     
     var alarmPin: AlarmPin?
     
     @IBOutlet weak var alarmNameTextField: UITextField!
     @IBOutlet var switchEnabled: UISwitch!
     @IBOutlet var switchVibrate: UISwitch!
-    //    @IBOutlet var setMusicCell : UITableViewCell!
     @IBOutlet var setMusicCell: UITableViewCell!
-    
+
     
     @IBAction func saveButtonTapped(sender: AnyObject) {
         // Update Pin
@@ -49,6 +48,8 @@ class AlarmSettingsTableViewController: UITableViewController, MPMediaPickerCont
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        alarmNameTextField.delegate = self
+        
         if let alarm = alarmPin {
             updateViewWithAlarm(alarm)
         }
@@ -57,6 +58,11 @@ class AlarmSettingsTableViewController: UITableViewController, MPMediaPickerCont
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
     
     func updateAlarm() -> AlarmPin {
@@ -78,7 +84,14 @@ class AlarmSettingsTableViewController: UITableViewController, MPMediaPickerCont
     
     func updateViewWithAlarm(alarmPin: AlarmPin) {
         self.alarmPin = alarmPin
+        
         alarmNameTextField.text = alarmPin.alarmName
+        
+        let enabled = alarmPin.enabled as Bool
+        switchEnabled.on = enabled
+        
+        let vibrate = alarmPin.vibrate as Bool
+        switchVibrate.on = vibrate
     }
     
     

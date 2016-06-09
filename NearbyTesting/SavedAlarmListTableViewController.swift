@@ -12,11 +12,16 @@ class SavedAlarmListTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        tableView.reloadData()
     }
     
     @IBAction func cancelButtonTapped(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    @IBAction func deleteAllPins(sender: AnyObject) {
+        showAlertForDeleteAll()
+        tableView.reloadData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -40,6 +45,25 @@ class SavedAlarmListTableViewController: UITableViewController {
         cell.textLabel?.text = alarm.alarmName
         
         return cell
+    }
+    
+    func showAlertForDeleteAll() {
+        // Then show an Alert Notification here
+        let alertController = UIAlertController(title: "WARNING!", message: "You are about to delete all your alarms. This can't be undone. Are you sure you want to do that?", preferredStyle: .Alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Destructive) { (alert) -> Void in
+            print("Okay button pressed")
+        }
+        
+        let deleteAllAction = UIAlertAction(title: "Delete All", style: .Default) { (alert) -> Void in
+            print("Okay button pressed")
+            AlarmController.sharedInstance.clearCoreData("AlarmPin")
+            self.tableView.reloadData()
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(deleteAllAction)
+        self.presentViewController(alertController, animated: true, completion: nil)
     }
     
     

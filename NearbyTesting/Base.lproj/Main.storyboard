@@ -21,12 +21,28 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="2IG-Mk-8W4">
                                 <rect key="frame" x="0.0" y="20" width="600" height="536"/>
                             </mapView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ifX-fw-SyH">
+                                <rect key="frame" x="540" y="539" width="60" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="60" id="gSj-VK-k0S"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="8"/>
+                                <state key="normal" title=" Clear Map">
+                                    <color key="titleColor" red="0.047058823530000002" green="0.37647058820000001" blue="0.98039215690000003" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="clearMapOfAnnotations:" destination="PYh-c3-qvT" eventType="touchUpInside" id="som-2d-y18"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="2IG-Mk-8W4" secondAttribute="trailing" id="59J-Py-Acb"/>
+                            <constraint firstItem="ifX-fw-SyH" firstAttribute="trailing" secondItem="2IG-Mk-8W4" secondAttribute="trailing" id="GW4-m0-3V6"/>
                             <constraint firstItem="2IG-Mk-8W4" firstAttribute="leading" secondItem="joG-E9-dwT" secondAttribute="leading" id="PMd-97-Teb"/>
                             <constraint firstItem="2IG-Mk-8W4" firstAttribute="top" secondItem="DXc-6O-K6V" secondAttribute="bottom" id="Zqq-KZ-qEq"/>
+                            <constraint firstItem="ifX-fw-SyH" firstAttribute="top" secondItem="DXc-6O-K6V" secondAttribute="bottom" constant="519" id="b4G-5K-rnl"/>
+                            <constraint firstItem="ifX-fw-SyH" firstAttribute="bottom" secondItem="nq7-vF-g2M" secondAttribute="top" constant="8" id="eOD-Uo-Q9P"/>
                             <constraint firstItem="2IG-Mk-8W4" firstAttribute="bottom" secondItem="nq7-vF-g2M" secondAttribute="top" id="zi4-2h-DGp"/>
                         </constraints>
                     </view>
@@ -39,11 +55,12 @@
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="kWL-6P-N0n"/>
                         <barButtonItem title="Saved Alarms" id="nac-ga-awf">
                             <connections>
-                                <segue destination="OWV-UN-ULG" kind="presentation" identifier="toSavedPinsList" id="Whg-Q5-P04"/>
+                                <segue destination="OWV-UN-ULG" kind="show" identifier="toSavedPinsList" id="Whg-Q5-P04"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="thZ-qI-BoI"/>
                         <barButtonItem id="1lN-vU-3Yg"/>
+                        <barButtonItem image="settings" id="cnr-EO-RRQ"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Tap to Add Pin" id="no5-d1-MjC"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
@@ -56,7 +73,7 @@
             </objects>
             <point key="canvasLocation" x="1897" y="-278"/>
         </scene>
-        <!--My Pins-->
+        <!--Saved Alarms-->
         <scene sceneID="eqd-Tn-FYa">
             <objects>
                 <tableViewController id="68c-28-xi1" customClass="SavedAlarmListTableViewController" customModule="NearbyTesting" customModuleProvider="target" sceneMemberID="viewController">
@@ -82,10 +99,15 @@
                             <outlet property="delegate" destination="68c-28-xi1" id="pUY-k6-GBw"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="My Pins" id="bM6-Hh-WbO">
+                    <navigationItem key="navigationItem" title="Saved Alarms" id="bM6-Hh-WbO">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="Uib-hA-7ba">
                             <connections>
                                 <action selector="cancelButtonTapped:" destination="68c-28-xi1" id="ot7-cU-k2e"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Delete All" id="tVi-tE-fdC">
+                            <connections>
+                                <action selector="deleteAllPins:" destination="68c-28-xi1" id="ceZ-i0-8dz"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -109,7 +131,7 @@
                         <sections>
                             <tableViewSection headerTitle="Alarm Name" id="pQ5-rN-vXI">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="X0L-Xj-n6I">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="X0L-Xj-n6I">
                                         <rect key="frame" x="0.0" y="50" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="X0L-Xj-n6I" id="ETv-fq-Wps">
@@ -133,7 +155,7 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Enable Alarm" id="hzF-RT-Ora">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="47i-tX-EhH">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="47i-tX-EhH">
                                         <rect key="frame" x="0.0" y="145" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="47i-tX-EhH" id="dBv-eB-uLX">
@@ -164,7 +186,7 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Vibrate" id="Nb2-rF-8jk">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="p3i-8a-W2s">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="p3i-8a-W2s">
                                         <rect key="frame" x="0.0" y="240" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="p3i-8a-W2s" id="OF8-8w-Oyt">
@@ -195,7 +217,7 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Set Sound" id="4Tn-xV-2sv">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="81k-dj-O74">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="81k-dj-O74">
                                         <rect key="frame" x="0.0" y="335" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="81k-dj-O74" id="mc2-x7-Yy7">
@@ -223,7 +245,7 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Delete" id="ffn-qW-jfs">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="R0R-RE-Cgl">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="R0R-RE-Cgl">
                                         <rect key="frame" x="0.0" y="430" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="R0R-RE-Cgl" id="NyM-N7-VjY">
@@ -364,7 +386,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="A4D-oy-jDd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1197" y="-278"/>
+            <point key="canvasLocation" x="1196" y="-303"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="7Y4-ul-5qU">
@@ -387,6 +409,7 @@
     </scenes>
     <resources>
         <image name="CurrentLocation" width="15" height="15"/>
+        <image name="settings" width="32" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="j2T-nG-uCy"/>

@@ -41,6 +41,23 @@ class AlarmController {
         saveToPersistentStorage()
     }
     
+    func clearCoreData(entity:String) {
+        let fetchRequest = NSFetchRequest()
+        fetchRequest.entity = NSEntityDescription.entityForName(entity, inManagedObjectContext: Stack.sharedStack.managedObjectContext)
+        fetchRequest.includesPropertyValues = false
+        do {
+            if let results = try Stack.sharedStack.managedObjectContext.executeFetchRequest(fetchRequest) as? [NSManagedObject] {
+                for result in results {
+                    Stack.sharedStack.managedObjectContext.deleteObject(result)
+                }
+                
+                try Stack.sharedStack.managedObjectContext.save()
+            }
+        } catch {
+            print("failed to clear core data")
+        }
+    }
+    
     func updateAlarmTitle(alarmName: String, alarm: AlarmPin) {
         alarm.alarmName = alarmName
         saveToPersistentStorage()

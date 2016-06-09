@@ -23,6 +23,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     var locationManager = CLLocationManager()
     var annotationCallout: MKPinAnnotationView!
     var alarmPin: AlarmPin!
+    let geoCoder = CLGeocoder()
     
     // Search
     var resultSearchController: UISearchController? = nil
@@ -62,18 +63,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
-
-        if (alarmPin != nil) {
-            if let alarmPin = alarmPin {
+        
+        if let alarmPin = alarmPin {
             annotationFromAlarmPinSettings(alarmPin)
-            }
         }
     }
     
     //MARK: - Drop a NEW PIN
     func tapGestureRecognizer(tapGestureRecognizer: UITapGestureRecognizer) {
-        
-        print("Tap Gesture Recognized!")
         
         locationManager.requestAlwaysAuthorization()
         
@@ -88,27 +85,21 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         annotation.coordinate = newCoordinate
         mapView.addAnnotation(annotation)
         
-        // Create circle with the Pin
-        let fenceDistance: CLLocationDistance = 3000
-        let circle = MKCircle(centerCoordinate: newCoordinate, radius: fenceDistance)
-        
         // Creates the span and animated zoomed into an area
         let span = MKCoordinateSpanMake(0.1, 0.1)
         let region = MKCoordinateRegion(center: newCoordinate, span: span)
         mapView.setRegion(region, animated: true)
-        mapView.addOverlay(circle)
         
-        let geoCoder = CLGeocoder()
         let location = CLLocation(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude)
         geoCoder.reverseGeocodeLocation(location) { (placemarks, error) in
             let placeArray = placemarks as [CLPlacemark]!
             var placeMark: CLPlacemark!
             placeMark = placeArray?[0]
             
-            
             if let street = placeMark.addressDictionary?["Thoroughfare"] as? String {
                 self.annotation.title = street as String
-                print(street)
+                
+                let fenceDistance: CLLocationDistance = 3000
                 
                 let alarm = AlarmPin(alarmName: self.annotation.title!, longitude: newCoordinate.longitude, latitude: newCoordinate.latitude, radius: fenceDistance)
 
@@ -120,17 +111,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 self.performSelector(#selector(self.selectAnnotation), withObject: self.annotation, afterDelay: 0.5)
             }
         }
-
-        
-        // Add an alarm pin
-//        let alarm = AlarmPin(alarmName: self.annotation.title!, longitude: newCoordinate.longitude, latitude: newCoordinate.latitude, radius: fenceDistance)
-//        //let coordinate = CLLocationCoordinate2D(latitude: alarm.latitude as Double, longitude: alarm.longitude as Double)
-//        addAlarmPin(alarm)
-//        
-//        AlarmController.sharedInstance.addAlarm(alarm)
-//        alarmPin = alarm
     }
     
+    @IBAction func clearMapOfAnnotations(sender: AnyObject) {
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.removeOverlays(mapView.overlays)
+    }
     
     @IBAction func centerMapOnUserButtonClicked(sender: AnyObject) {
         mapView.setUserTrackingMode(MKUserTrackingMode.Follow, animated: true)
@@ -156,7 +142,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
         
-        //let annotation = MKPointAnnotation()
         annotation.coordinate = CLLocationCoordinate2D(latitude: Double(alarmPin.latitude), longitude: Double(alarmPin.longitude))
         mapView.addAnnotation(annotation)
         
@@ -205,10 +190,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     // MARK: - MKMapView Delegate Methods
     
     func mapViewDidFinishLoadingMap(mapView: MKMapView) {
-        for currentAnnotation in mapView.annotations {
-            if currentAnnotation.isEqual(self.alarmPin) {
-                mapView.selectAnnotation(currentAnnotation, animated: true)
-            }
+        if annotation.title == "" {
+            mapView.removeAnnotations(mapView.annotations)
+            mapView.removeOverlays(mapView.overlays)
+            mapView.showsUserLocation = true
+            mapView.setUserTrackingMode(MKUserTrackingMode.Follow, animated: true)
         }
     }
     
@@ -295,7 +281,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         print("Tapped \(annotation.title)")
-        self.performSelector(#selector(self.selectAnnotation), withObject: self.annotation, afterDelay: 0.5)
+        //self.performSelector(#selector(self.selectAnnotation), withObject: self.annotation, afterDelay: 0.5)
     }
     
     //MARK: - MapView Helper Functions
@@ -447,51 +433,28 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             detailViewController.alarmPin = alarmPin
         }
     }
-    
-    override func motionBegan(motion: UIEventSubtype, withEvent event: UIEvent?) {
-        
-        if (motion == .MotionShake) {
-            print("iPhone Shake Detected")
-        }
-    }
 }
 
 
 extension MapViewController: HandleMapSearch {
     func dropPinZoomIn(placemark: MKPlacemark) {
-        // clear existing pins
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
         
-        //        // cache the pin
-        //        selectedPin = placemark
-        
-        //let annotation = MKPointAnnotation()
         annotation.coordinate = placemark.coordinate
         annotation.title = placemark.name
-        // annotation.title = "New Pin"
-        // annotation.subtitle = "Sweet Annotation Bruh!"
-        
-        //        if let city = placemark.locality,
-        //            let state = placemark.administrativeArea {
-        //            annotation.subtitle = "\(city), \(state)"
-        //        }
         mapView.addAnnotation(annotation)
-        
-        // Create circle with the Pin
-        let fenceDistance: CLLocationDistance = 3000
-        let circle = MKCircle(centerCoordinate: placemark.coordinate, radius: fenceDistance)
         
         // Creates the span and animated zoomed into an area
         let span = MKCoordinateSpanMake(0.1, 0.1)
         let region = MKCoordinateRegionMake(placemark.coordinate, span)
         mapView.setRegion(region, animated: true)
-        mapView.addOverlay(circle)
+        
+        let fenceDistance: CLLocationDistance = 3000
         
         // Add an alarm pin
         let alarm = AlarmPin(alarmName: annotation.title!, longitude: placemark.coordinate.longitude, latitude: placemark.coordinate.latitude, radius: fenceDistance)
         
-        //let alarm = AlarmPin(coordinate: placemark.coordinate, radius: fenceDistance, identifier: "")
         addAlarmPin(alarm)
         
         if alarmPin?.enabled == true {

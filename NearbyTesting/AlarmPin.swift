@@ -23,7 +23,7 @@ class AlarmPin: NSManagedObject, MKAnnotation {
         
         self.alarmName = alarmName
         self.enabled = false
-        self.vibrate = true
+        self.vibrate = false
         self.sound = true
         
         // Assign and convert our doubles into an NSNumber to enter into coreData
