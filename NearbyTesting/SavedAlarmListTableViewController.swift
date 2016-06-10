@@ -22,6 +22,7 @@ class SavedAlarmListTableViewController: UITableViewController {
     @IBAction func deleteAllPins(sender: AnyObject) {
         showAlertForDeleteAll()
         tableView.reloadData()
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     override func didReceiveMemoryWarning() {

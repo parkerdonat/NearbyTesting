@@ -20,6 +20,19 @@ class AlarmSettingsTableViewController: UITableViewController, UITextFieldDelega
 
     
     @IBAction func saveButtonTapped(sender: AnyObject) {
+        //Check if textField is nil 
+        if alarmNameTextField.text == "" {
+            let alertController = UIAlertController(title: "Empty Alarm Name", message: "Your alarm must have an name to save.", preferredStyle: .Alert)
+            
+            let okAction = UIAlertAction(title: "Okay", style: .Default) { (alert) -> Void in
+                print("Okay button pressed")
+            }
+            
+            alertController.addAction(okAction)
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+        }
+        
         // Update Pin
         let alarm = updateAlarm()
         navigationController?.popViewControllerAnimated(true)
