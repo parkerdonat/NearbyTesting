@@ -15,6 +15,12 @@ class SavedAlarmListTableViewController: UITableViewController {
         tableView.reloadData()
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(true)
+        
+        tableView.reloadData()
+    }
+    
     @IBAction func cancelButtonTapped(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -22,7 +28,6 @@ class SavedAlarmListTableViewController: UITableViewController {
     @IBAction func deleteAllPins(sender: AnyObject) {
         showAlertForDeleteAll()
         tableView.reloadData()
-        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -89,22 +94,24 @@ class SavedAlarmListTableViewController: UITableViewController {
         }
     }
     
-    
     /*
-     // Override to support rearranging the table view.
-     override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
+     - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+     if (editingStyle == UITableViewCellEditingStyleDelete) {
+     // Fetch Monitored Region
+     CLRegion *region = [self.geofences objectAtIndex:[indexPath row]];
      
+     // Stop Monitoring Region
+     [self.locationManager stopMonitoringForRegion:region];
+     
+     // Update Table View
+     [self.geofences removeObject:region];
+     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationRight];
+     
+     // Update View
+     [self updateView];
+     }
      }
      */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-    
     
     // MARK: - Navigation
     

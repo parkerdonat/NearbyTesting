@@ -66,11 +66,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-        do {
-            try Stack.sharedStack.managedObjectContext.save()
-        } catch {
-            print("Something went wrong with saving to core data.")
-        }
+//        do {
+//            try Stack.sharedStack.managedObjectContext.save()
+//        } catch {
+//            print("Something went wrong with saving to core data.")
+//        }
     }
 }
 

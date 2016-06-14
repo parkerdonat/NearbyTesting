@@ -64,6 +64,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         
+        if alarmPin?.enabled == false {
+            stopMonitoringAlarmPin(alarmPin)
+        }
+        
         if let alarmPin = alarmPin {
             annotationFromAlarmPinSettings(alarmPin)
         }
@@ -73,6 +77,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     func tapGestureRecognizer(tapGestureRecognizer: UITapGestureRecognizer) {
         
         locationManager.requestAlwaysAuthorization()
+        
+        // TEST - ADDED TO ONLY HAVE ONE PIN AT A TIME
+        if let alarmPin = alarmPin {
+            AlarmController.sharedInstance.removePinAlarm(alarmPin)
+        }
         
         // Delete previous annotations so only one pin exists on the map at one time
         mapView.removeAnnotations(mapView.annotations)
@@ -102,7 +111,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 let fenceDistance: CLLocationDistance = 2000
                 
                 let alarm = AlarmPin(alarmName: self.annotation.title!, longitude: newCoordinate.longitude, latitude: newCoordinate.latitude, radius: fenceDistance)
-
+                
                 self.addAlarmPin(alarm)
                 
                 AlarmController.sharedInstance.addAlarm(alarm)
@@ -139,6 +148,22 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     // Updates with saved pin
     func annotationFromAlarmPinSettings(alarmPin: AlarmPin) -> [MKAnnotation] {
+        
+        if alarmPin.enabled == false {
+            if annotationCallout?.pinTintColor == nil {
+                let loadSavedAnnotation = MKPinAnnotationView()
+                loadSavedAnnotation.pinTintColor = UIColor.redColor()
+            } else {
+                annotationCallout.pinTintColor = UIColor.redColor()
+            }
+        } else {
+            if annotationCallout?.pinTintColor == nil {
+                let loadSavedAnnotation = MKPinAnnotationView()
+                loadSavedAnnotation.pinTintColor = UIColor(red:0.00, green:0.48, blue:0.00, alpha:1.0)
+            } else {
+                annotationCallout.pinTintColor = UIColor(red:0.00, green:0.48, blue:0.00, alpha:1.0)
+            }
+        }
         
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
@@ -231,7 +256,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         let reuseID = "pin"
         annotationCallout = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseID) as? MKPinAnnotationView
-                
+        
         if alarmPin?.enabled == false {
             if annotationCallout == nil {
                 annotationCallout = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
@@ -271,7 +296,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         AlarmController.sharedInstance.updateAlarmTitle(annotationTitle, alarm: pin)
         self.performSelector(#selector(self.selectAnnotation), withObject: self.annotation, afterDelay: 0.5)
     }
-
+    
     // Shows the callout with delay
     func selectAnnotation(annotation: MKAnnotation) {
         mapView.selectAnnotation(annotation, animated: true)
@@ -279,7 +304,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         print("Tapped \(annotation.title)")
-        mapView.showsUserLocation = true
         mapView.setUserTrackingMode(MKUserTrackingMode.Follow, animated: true)
     }
     
@@ -293,7 +317,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         let region = CLCircularRegion(center: coordinate, radius: Double(alarmPin.radius), identifier: alarmPin.alarmName)
         region.notifyOnEntry = true
-        
+        print("The region identifier \(region.identifier)")
         return region
     }
     
@@ -363,21 +387,39 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         // Show an alert if application is active
         if UIApplication.sharedApplication().applicationState == .Active {
             // Then show an Alert Notification here
-            let alertController = UIAlertController(title: "YAY!", message: "You're nearby \(self.alarmPin.alarmName).", preferredStyle: .Alert)
+            let alertController = UIAlertController(title: "YAY!", message: "You're nearby \(region.identifier).", preferredStyle: .Alert)
             
-            let okAction = UIAlertAction(title: "Okay", style: .Default) { (alert) -> Void in
-                print("Okay button pressed")
-                self.locationManager.startMonitoringForRegion(region)            }
-            alertController.addAction(okAction)
-            locationManager.stopMonitoringForRegion(region)
-            AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+            let enableAction = UIAlertAction(title: "Re-enable", style: .Default) { (alert) -> Void in
+                print("Re-enable button pressed")
+                self.locationManager.startMonitoringForRegion(region)
+                self.alarmPin?.enabled = true
+                for annotation in self.mapView.annotations {
+                    self.mapView.removeAnnotation(annotation)
+                    self.mapView.addAnnotation(annotation)
+                }
+            }
+            let disableAction = UIAlertAction(title: "Disable", style: .Destructive) { (alert) -> Void in
+                print("Disable button pressed")
+                self.locationManager.stopMonitoringForRegion(region)
+                self.alarmPin?.enabled = false
+                for annotation in self.mapView.annotations {
+                    self.mapView.removeAnnotation(annotation)
+                    self.mapView.addAnnotation(annotation)
+                    self.mapView.removeOverlays(self.mapView.overlays)
+                    
+                }
+            }
+            alertController.addAction(enableAction)
+            alertController.addAction(disableAction)
             self.presentViewController(alertController, animated: true, completion: nil)
+            //            locationManager.stopMonitoringForRegion(region)
+            AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
             
         } else {
             // Otherwise present a Local Notification when app is closed
             let notification = UILocalNotification()
             notification.alertTitle = "Alarm Notification"
-            notification.alertBody = "You're nearby \(self.alarmPin.alarmName)."
+            notification.alertBody = "You're nearby \(region.identifier)."
             notification.soundName = UILocalNotificationDefaultSoundName
             UIApplication.sharedApplication().presentLocalNotificationNow(notification)
             
