@@ -24,6 +24,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     var annotationCallout: MKPinAnnotationView!
     var alarmPin: AlarmPin!
     let geoCoder = CLGeocoder()
+    static let sharedInstance = MapViewController()
     
     // Search
     var resultSearchController: UISearchController? = nil
@@ -64,6 +65,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         
+        for region in self.locationManager.monitoredRegions {
+            print("Active region \(region.identifier)")
+        }
+        
         if alarmPin?.enabled == false {
             stopMonitoringAlarmPin(alarmPin)
         }
@@ -76,12 +81,25 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     //MARK: - Drop a NEW PIN
     func tapGestureRecognizer(tapGestureRecognizer: UITapGestureRecognizer) {
         
-        locationManager.requestAlwaysAuthorization()
-        
-        // TEST - ADDED TO ONLY HAVE ONE PIN AT A TIME
-        if let alarmPin = alarmPin {
-            AlarmController.sharedInstance.removePinAlarm(alarmPin)
+        if mapView.annotations.count == 2 && alarmPin.enabled == true {
+            let alertController = UIAlertController(title: "Adding New Pin", message: "Adding a new pin will delete an active alarm.", preferredStyle: .Alert)
+            
+            let defaultAction = UIAlertAction(title: "Cancel", style: .Cancel) { (alert) -> Void in
+                print("Canceled button pressed.")
+                return
+            }
+            
+            let okAction = UIAlertAction(title: "Add New Pin", style: .Default) { (alert) -> Void in
+                print("Okay button pressed")
+            }
+            
+            alertController.addAction(defaultAction)
+            alertController.addAction(okAction)
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
         }
+
+        locationManager.requestAlwaysAuthorization()
         
         // Delete previous annotations so only one pin exists on the map at one time
         mapView.removeAnnotations(mapView.annotations)
@@ -125,6 +143,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     @IBAction func clearMapOfAnnotations(sender: AnyObject) {
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
+        
+        for region in self.locationManager.monitoredRegions {
+            print("Removed region \(region.identifier)")
+            locationManager.stopMonitoringForRegion(region)
+        }
     }
     
     @IBAction func centerMapOnUserButtonClicked(sender: AnyObject) {
@@ -149,19 +172,35 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     // Updates with saved pin
     func annotationFromAlarmPinSettings(alarmPin: AlarmPin) -> [MKAnnotation] {
         
+        if alarmPin.alarmName == "" {
+            mapView.removeAnnotations(mapView.annotations)
+            mapView.removeOverlays(mapView.overlays)
+            stopMonitoringAlarmPin(alarmPin)
+            mapView.showsUserLocation = true
+            return []
+        }
+        
         if alarmPin.enabled == false {
             if annotationCallout?.pinTintColor == nil {
                 let loadSavedAnnotation = MKPinAnnotationView()
                 loadSavedAnnotation.pinTintColor = UIColor.redColor()
+                stopMonitoringAlarmPin(alarmPin)
             } else {
                 annotationCallout.pinTintColor = UIColor.redColor()
+                stopMonitoringAlarmPin(alarmPin)
             }
         } else {
             if annotationCallout?.pinTintColor == nil {
+                if annotationCallout != nil  {
+                    stopMonitoringAlarmPin(alarmPin)
+                    return []
+                }
                 let loadSavedAnnotation = MKPinAnnotationView()
                 loadSavedAnnotation.pinTintColor = UIColor(red:0.00, green:0.48, blue:0.00, alpha:1.0)
+                startMonitoringAlarmPin(alarmPin)
             } else {
                 annotationCallout.pinTintColor = UIColor(red:0.00, green:0.48, blue:0.00, alpha:1.0)
+                startMonitoringAlarmPin(alarmPin)
             }
         }
         
@@ -217,10 +256,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func mapViewDidFinishLoadingMap(mapView: MKMapView) {
         if annotation.title == "" {
-            mapView.showsUserLocation = true
-            mapView.setUserTrackingMode(MKUserTrackingMode.Follow, animated: true)
             mapView.removeAnnotations(mapView.annotations)
             mapView.removeOverlays(mapView.overlays)
+            stopMonitoringAlarmPin(alarmPin)
+            mapView.showsUserLocation = true
         }
     }
     
@@ -304,7 +343,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         print("Tapped \(annotation.title)")
-        mapView.setUserTrackingMode(MKUserTrackingMode.Follow, animated: true)
     }
     
     //MARK: - MapView Helper Functions
@@ -317,7 +355,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         let region = CLCircularRegion(center: coordinate, radius: Double(alarmPin.radius), identifier: alarmPin.alarmName)
         region.notifyOnEntry = true
-        print("The region identifier \(region.identifier)")
+        print("The region identifier is \(region.identifier)")
         return region
     }
     
@@ -366,6 +404,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             if let circularRegion = region as? CLCircularRegion {
                 if circularRegion.identifier == alarmPin.alarmName {
                     locationManager.stopMonitoringForRegion(circularRegion)
+                    print("Stopped monitoring region for \(region.identifier)")
                 }
             }
         }
@@ -405,8 +444,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 for annotation in self.mapView.annotations {
                     self.mapView.removeAnnotation(annotation)
                     self.mapView.addAnnotation(annotation)
-                    self.mapView.removeOverlays(self.mapView.overlays)
-                    
                 }
             }
             alertController.addAction(enableAction)
@@ -448,8 +485,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
     }
     
+    func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
+        print("Monitoring failed for region with identifier: \(region!.identifier)")
+    }
+    
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
         print("Settings don't allow tracking of the users location.")
+        print("Location Manager failed with the following error: \(error)")
     }
     
     
@@ -469,6 +511,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
 
 extension MapViewController: HandleMapSearch {
     func dropPinZoomIn(placemark: MKPlacemark) {
+        
+        locationManager.requestAlwaysAuthorization()
+        
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
         
@@ -489,5 +534,9 @@ extension MapViewController: HandleMapSearch {
         addAlarmPin(alarm)
         
         AlarmController.sharedInstance.addAlarm(alarm)
+        
+        self.alarmPin = alarm
+        
+        self.performSelector(#selector(self.selectAnnotation), withObject: self.annotation, afterDelay: 0.5)
     }
 }

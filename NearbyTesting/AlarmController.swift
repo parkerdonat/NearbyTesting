@@ -54,7 +54,7 @@ class AlarmController {
                 try Stack.sharedStack.managedObjectContext.save()
             }
         } catch {
-            print("failed to clear core data")
+            print("Failed to clear core data")
         }
     }
     

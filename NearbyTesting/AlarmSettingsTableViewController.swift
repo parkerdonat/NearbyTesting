@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MapKit
 import MediaPlayer
 
 class AlarmSettingsTableViewController: UITableViewController, UITextFieldDelegate, MPMediaPickerControllerDelegate {
@@ -17,7 +18,8 @@ class AlarmSettingsTableViewController: UITableViewController, UITextFieldDelega
     @IBOutlet var switchEnabled: UISwitch!
     @IBOutlet var switchVibrate: UISwitch!
     @IBOutlet var setMusicCell: UITableViewCell!
-
+    
+    static let sharedInstance = AlarmSettingsTableViewController()
     
     @IBAction func saveButtonTapped(sender: AnyObject) {
         //Check if textField is nil 
@@ -40,14 +42,27 @@ class AlarmSettingsTableViewController: UITableViewController, UITextFieldDelega
     }
     
     @IBAction func cancelButtonTapped(sender: AnyObject) {
+        let alarm = updateAlarm()
         navigationController?.popViewControllerAnimated(true)
+        (navigationController?.viewControllers.first as? MapViewController)?.annotationFromAlarmPinSettings(alarm)
     }
     
     @IBAction func deleteButtonTapped(sender: AnyObject) {
         // Delete Pin
         guard let alarmPin = alarmPin else { return }
-            AlarmController.sharedInstance.removePinAlarm(alarmPin)
-            navigationController?.popViewControllerAnimated(true)
+        AlarmController.sharedInstance.removePinAlarm(alarmPin)
+        
+        for region in MapViewController.sharedInstance.locationManager.monitoredRegions {
+            if let circularRegion = region as? CLCircularRegion {
+                if circularRegion.identifier == alarmPin.alarmName {
+                    print("Going to remove region \(region.identifier)")
+                    MapViewController.sharedInstance.locationManager.stopMonitoringForRegion(circularRegion)
+                }
+            }
+        }
+        
+        navigationController?.popViewControllerAnimated(true)
+        (navigationController?.viewControllers.first as? MapViewController)?.annotationFromAlarmPinSettings(alarmPin)
     }
     
     @IBAction func enableSwitchTapped(sender: AnyObject) {
@@ -119,14 +134,24 @@ class AlarmSettingsTableViewController: UITableViewController, UITextFieldDelega
             
             let mediaPicker = MPMediaPickerController(mediaTypes: .Music)
             mediaPicker.delegate = self
+            mediaPicker.prompt = "Select a song from your music"
+            mediaPicker.showsCloudItems = false
             mediaPicker.allowsPickingMultipleItems = false
             presentViewController(mediaPicker, animated: true, completion: {})
         }
     }
     
     func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
-        
-        self.dismissViewControllerAnimated(true, completion: {});
+        //Get [MPMediaItem]
+        let items = mediaItemCollection.items
+        //Iterate on each MPMediaItem
+        for item in items {
+            //Retrieve persistent ID
+            let persistentID = item.valueForProperty(MPMediaItemPropertyPersistentID) as! NSNumber
+            //Use the persistent ID as you like.
+            print(persistentID.unsignedLongLongValue)
+        }
+        self.dismissViewControllerAnimated(true, completion: {})
     }
     
     func mediaPickerDidCancel(mediaPicker: MPMediaPickerController) {

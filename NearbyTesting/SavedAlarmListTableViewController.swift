@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MapKit
 
 class SavedAlarmListTableViewController: UITableViewController {
     
@@ -17,12 +18,12 @@ class SavedAlarmListTableViewController: UITableViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(true)
-        
         tableView.reloadData()
     }
     
     @IBAction func cancelButtonTapped(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
+        //(navigationController?.viewControllers.first as? MapViewController)
     }
     
     @IBAction func deleteAllPins(sender: AnyObject) {
@@ -64,6 +65,10 @@ class SavedAlarmListTableViewController: UITableViewController {
         let deleteAllAction = UIAlertAction(title: "Delete All", style: .Default) { (alert) -> Void in
             print("Okay button pressed")
             AlarmController.sharedInstance.clearCoreData("AlarmPin")
+            for region in MapViewController.sharedInstance.locationManager.monitoredRegions {
+                print("Removed region \(region.identifier)")
+                MapViewController.sharedInstance.locationManager.stopMonitoringForRegion(region)
+            }
             self.tableView.reloadData()
         }
         
@@ -72,46 +77,25 @@ class SavedAlarmListTableViewController: UITableViewController {
         self.presentViewController(alertController, animated: true, completion: nil)
     }
     
-    
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
-    
-    
     // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            
-            let alarm = AlarmController.sharedInstance.fetchAlarmPins[indexPath.row]
-            AlarmController.sharedInstance.removePinAlarm(alarm)
-            
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        }
-    }
-    
-    /*
-     - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-     if (editingStyle == UITableViewCellEditingStyleDelete) {
-     // Fetch Monitored Region
-     CLRegion *region = [self.geofences objectAtIndex:[indexPath row]];
-     
-     // Stop Monitoring Region
-     [self.locationManager stopMonitoringForRegion:region];
-     
-     // Update Table View
-     [self.geofences removeObject:region];
-     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationRight];
-     
-     // Update View
-     [self updateView];
-     }
-     }
-     */
+//    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+//        if editingStyle == .Delete {
+//            
+//            let alarm = AlarmController.sharedInstance.fetchAlarmPins[indexPath.row]
+//            AlarmController.sharedInstance.removePinAlarm(alarm)
+//            
+//            for region in MapViewController.sharedInstance.locationManager.monitoredRegions {
+//                if let circularRegion = region as? CLCircularRegion {
+//                    if circularRegion.identifier == alarm.alarmName {
+//                        MapViewController.sharedInstance.locationManager.stopMonitoringForRegion(circularRegion)
+//                    }
+//                }
+//            }
+//            
+//            // Delete the row from the data source
+//            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+//        }
+//    }
     
     // MARK: - Navigation
     
