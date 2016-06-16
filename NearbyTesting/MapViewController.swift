@@ -466,14 +466,16 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             
         } else {
             // Otherwise present a Local Notification when app is closed
+            if let alarmPin = alarmPin {
             let notification = UILocalNotification()
             notification.alertTitle = "Alarm Notification"
-            notification.alertBody = "You're nearby \(alarmPin?.alarmName)."
+            notification.alertBody = "You're nearby \(alarmPin.alarmName)."
             notification.soundName = UILocalNotificationDefaultSoundName
             UIApplication.sharedApplication().presentLocalNotificationNow(notification)
             
             locationManager.stopMonitoringForRegion(region)
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+            }
         }
     }
     
