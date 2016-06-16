@@ -81,12 +81,34 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     //MARK: - Drop a NEW PIN
     func tapGestureRecognizer(tapGestureRecognizer: UITapGestureRecognizer) {
         
+        if self.locationManager.monitoredRegions.count == 20 {
+            let alertController = UIAlertController(title: "So Sorry", message: "You've reached the limit of 20 saved alarms.", preferredStyle: .Alert)
+            
+            let enableAction = UIAlertAction(title: "Okay", style: .Default) { (alert) -> Void in
+                print("Okay button pressed")
+                if (self.mapView.annotations.last != nil) {
+                    if let alarmPin = self.alarmPin {
+                        self.stopMonitoringAlarmPin(alarmPin)
+                    }
+                }
+                
+                self.mapView.removeAnnotations(self.mapView.annotations)
+                self.mapView.removeOverlays(self.mapView.overlays)
+            }
+            alertController.addAction(enableAction)
+            self.presentViewController(alertController, animated: true, completion: nil)
+            return
+        }
+        
         locationManager.requestAlwaysAuthorization()
         
         // Delete previous annotations so only one pin exists on the map at one time
-        if alarmPin != nil {
+        if (mapView.annotations.last != nil) {
+            if let alarmPin = alarmPin {
             stopMonitoringAlarmPin(alarmPin)
+            }
         }
+        
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
         
@@ -414,32 +436,32 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         if UIApplication.sharedApplication().applicationState == .Active {
             // Then show an Alert Notification here
             if let alarmPin = alarmPin {
-            
-            let alertController = UIAlertController(title: "YAY!", message: "You're nearby \(alarmPin.alarmName).", preferredStyle: .Alert)
-            
-            let enableAction = UIAlertAction(title: "Re-enable", style: .Default) { (alert) -> Void in
-                print("Re-enable button pressed")
-                self.locationManager.startMonitoringForRegion(region)
-                self.alarmPin?.enabled = true
-                for annotation in self.mapView.annotations {
-                    self.mapView.removeAnnotation(annotation)
-                    self.mapView.addAnnotation(annotation)
+                
+                let alertController = UIAlertController(title: "YAY!", message: "You're nearby \(alarmPin.alarmName).", preferredStyle: .Alert)
+                
+                let enableAction = UIAlertAction(title: "Re-enable", style: .Default) { (alert) -> Void in
+                    print("Re-enable button pressed")
+                    self.locationManager.startMonitoringForRegion(region)
+                    self.alarmPin?.enabled = true
+                    for annotation in self.mapView.annotations {
+                        self.mapView.removeAnnotation(annotation)
+                        self.mapView.addAnnotation(annotation)
+                    }
                 }
-            }
-            let disableAction = UIAlertAction(title: "Disable", style: .Destructive) { (alert) -> Void in
-                print("Disable button pressed")
-                self.locationManager.stopMonitoringForRegion(region)
-                self.alarmPin?.enabled = false
-                for annotation in self.mapView.annotations {
-                    self.mapView.removeAnnotation(annotation)
-                    self.mapView.addAnnotation(annotation)
+                let disableAction = UIAlertAction(title: "Disable", style: .Destructive) { (alert) -> Void in
+                    print("Disable button pressed")
+                    self.locationManager.stopMonitoringForRegion(region)
+                    self.alarmPin?.enabled = false
+                    for annotation in self.mapView.annotations {
+                        self.mapView.removeAnnotation(annotation)
+                        self.mapView.addAnnotation(annotation)
+                    }
                 }
-            }
-            alertController.addAction(enableAction)
-            alertController.addAction(disableAction)
-            self.presentViewController(alertController, animated: true, completion: nil)
-            //            locationManager.stopMonitoringForRegion(region)
-            AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+                alertController.addAction(enableAction)
+                alertController.addAction(disableAction)
+                self.presentViewController(alertController, animated: true, completion: nil)
+                //            locationManager.stopMonitoringForRegion(region)
+                AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
             }
             
         } else {
@@ -510,6 +532,25 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
 
 extension MapViewController: HandleMapSearch {
     func dropPinZoomIn(placemark: MKPlacemark) {
+        
+        if self.locationManager.monitoredRegions.count == 20 {
+            let alertController = UIAlertController(title: "So Sorry", message: "You've reached the limit of 20 saved alarms.", preferredStyle: .Alert)
+            
+            let enableAction = UIAlertAction(title: "Okay", style: .Default) { (alert) -> Void in
+                print("Okay button pressed")
+                if (self.mapView.annotations.last != nil) {
+                    if let alarmPin = self.alarmPin {
+                        self.stopMonitoringAlarmPin(alarmPin)
+                    }
+                }
+                
+                self.mapView.removeAnnotations(self.mapView.annotations)
+                self.mapView.removeOverlays(self.mapView.overlays)
+            }
+            alertController.addAction(enableAction)
+            self.presentViewController(alertController, animated: true, completion: nil)
+            return
+        }
         
         locationManager.requestAlwaysAuthorization()
         

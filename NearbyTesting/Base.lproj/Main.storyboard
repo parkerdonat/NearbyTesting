@@ -44,7 +44,6 @@
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="thZ-qI-BoI"/>
                         <barButtonItem id="1lN-vU-3Yg"/>
-                        <barButtonItem image="settings" id="cnr-EO-RRQ"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Tap to Add Pin" id="no5-d1-MjC"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
@@ -168,69 +167,10 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Vibrate" id="Nb2-rF-8jk">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="p3i-8a-W2s">
-                                        <rect key="frame" x="0.0" y="240" width="600" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="p3i-8a-W2s" id="OF8-8w-Oyt">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vibrate" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N9e-Nb-28y">
-                                                    <rect key="frame" x="8" y="4" width="106" height="35"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="106" id="Xgs-KO-7fL"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="N9e-Nb-28y" firstAttribute="centerY" secondItem="OF8-8w-Oyt" secondAttribute="centerY" id="5fR-Na-Vg0"/>
-                                                <constraint firstItem="N9e-Nb-28y" firstAttribute="leading" secondItem="OF8-8w-Oyt" secondAttribute="leadingMargin" id="X56-Pb-Vrt"/>
-                                                <constraint firstItem="N9e-Nb-28y" firstAttribute="top" secondItem="OF8-8w-Oyt" secondAttribute="topMargin" constant="-4" id="YNy-db-ro4"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <outlet property="accessoryView" destination="epn-ur-7ZL" id="Au0-r8-JSr"/>
-                                        </connections>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                            <tableViewSection headerTitle="Set Sound" id="4Tn-xV-2sv">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="81k-dj-O74">
-                                        <rect key="frame" x="0.0" y="335" width="600" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="81k-dj-O74" id="mc2-x7-Yy7">
-                                            <rect key="frame" x="0.0" y="0.0" width="567" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Music" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dcl-SJ-xsz">
-                                                    <rect key="frame" x="8" y="4" width="106" height="35"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="106" id="dCo-UA-u92"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="dcl-SJ-xsz" firstAttribute="leading" secondItem="mc2-x7-Yy7" secondAttribute="leadingMargin" id="5vd-bG-BOp"/>
-                                                <constraint firstItem="dcl-SJ-xsz" firstAttribute="top" secondItem="mc2-x7-Yy7" secondAttribute="topMargin" constant="-4" id="MAb-WJ-sV1"/>
-                                                <constraint firstItem="dcl-SJ-xsz" firstAttribute="centerY" secondItem="mc2-x7-Yy7" secondAttribute="centerY" id="Wwk-au-FeG"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
                             <tableViewSection headerTitle="Delete" id="ffn-qW-jfs">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="R0R-RE-Cgl">
-                                        <rect key="frame" x="0.0" y="430" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="240" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="R0R-RE-Cgl" id="NyM-N7-VjY">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -278,7 +218,6 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="alarmNameTextField" destination="2W1-xU-F9U" id="yen-23-XHu"/>
-                        <outlet property="setMusicCell" destination="81k-dj-O74" id="zgH-kf-3Hi"/>
                         <outlet property="switchEnabled" destination="Bmd-jI-E3L" id="GWQ-h3-MGe"/>
                         <outlet property="switchVibrate" destination="epn-ur-7ZL" id="4tB-FN-VgY"/>
                     </connections>
@@ -393,7 +332,6 @@
     </scenes>
     <resources>
         <image name="CurrentLocation" width="15" height="15"/>
-        <image name="settings" width="32" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="j2T-nG-uCy"/>
