@@ -81,27 +81,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     //MARK: - Drop a NEW PIN
     func tapGestureRecognizer(tapGestureRecognizer: UITapGestureRecognizer) {
         
-        if mapView.annotations.count == 2 && alarmPin.enabled == true {
-            let alertController = UIAlertController(title: "Adding New Pin", message: "Adding a new pin will delete an active alarm.", preferredStyle: .Alert)
-            
-            let defaultAction = UIAlertAction(title: "Cancel", style: .Cancel) { (alert) -> Void in
-                print("Canceled button pressed.")
-                return
-            }
-            
-            let okAction = UIAlertAction(title: "Add New Pin", style: .Default) { (alert) -> Void in
-                print("Okay button pressed")
-            }
-            
-            alertController.addAction(defaultAction)
-            alertController.addAction(okAction)
-            
-            self.presentViewController(alertController, animated: true, completion: nil)
-        }
-
         locationManager.requestAlwaysAuthorization()
         
         // Delete previous annotations so only one pin exists on the map at one time
+        if alarmPin != nil {
+            stopMonitoringAlarmPin(alarmPin)
+        }
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
         
@@ -128,7 +113,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 
                 let fenceDistance: CLLocationDistance = 2000
                 
-                let alarm = AlarmPin(alarmName: self.annotation.title!, longitude: newCoordinate.longitude, latitude: newCoordinate.latitude, radius: fenceDistance)
+                let identifier = NSUUID().UUIDString
+                let alarm = AlarmPin(alarmName: self.annotation.title!, identifier: identifier, longitude: newCoordinate.longitude, latitude: newCoordinate.latitude, radius: fenceDistance)
                 
                 self.addAlarmPin(alarm)
                 
@@ -353,9 +339,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         // create the region to show with AlarmPin
         let coordinate = CLLocationCoordinate2D(latitude: alarmPin.latitude as Double, longitude: alarmPin.longitude as Double)
         
-        let region = CLCircularRegion(center: coordinate, radius: Double(alarmPin.radius), identifier: alarmPin.alarmName)
+        let region = CLCircularRegion(center: coordinate, radius: Double(alarmPin.radius), identifier: alarmPin.identifier)
         region.notifyOnEntry = true
         print("The region identifier is \(region.identifier)")
+        print("The model identifier is \(alarmPin.identifier)")
         return region
     }
     
@@ -402,7 +389,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     func stopMonitoringAlarmPin(alarmPin: AlarmPin) {
         for region in locationManager.monitoredRegions {
             if let circularRegion = region as? CLCircularRegion {
-                if circularRegion.identifier == alarmPin.alarmName {
+                if circularRegion.identifier == alarmPin.identifier {
                     locationManager.stopMonitoringForRegion(circularRegion)
                     print("Stopped monitoring region for \(region.identifier)")
                 }
@@ -426,7 +413,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         // Show an alert if application is active
         if UIApplication.sharedApplication().applicationState == .Active {
             // Then show an Alert Notification here
-            let alertController = UIAlertController(title: "YAY!", message: "You're nearby \(region.identifier).", preferredStyle: .Alert)
+            if let alarmPin = alarmPin {
+            
+            let alertController = UIAlertController(title: "YAY!", message: "You're nearby \(alarmPin.alarmName).", preferredStyle: .Alert)
             
             let enableAction = UIAlertAction(title: "Re-enable", style: .Default) { (alert) -> Void in
                 print("Re-enable button pressed")
@@ -451,12 +440,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             self.presentViewController(alertController, animated: true, completion: nil)
             //            locationManager.stopMonitoringForRegion(region)
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+            }
             
         } else {
             // Otherwise present a Local Notification when app is closed
             let notification = UILocalNotification()
             notification.alertTitle = "Alarm Notification"
-            notification.alertBody = "You're nearby \(region.identifier)."
+            notification.alertBody = "You're nearby \(alarmPin?.alarmName)."
             notification.soundName = UILocalNotificationDefaultSoundName
             UIApplication.sharedApplication().presentLocalNotificationNow(notification)
             
@@ -500,10 +490,19 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
         if segue.identifier == "toSettings" {
+            if alarmPin != nil {
+                stopMonitoringAlarmPin(alarmPin)
+            }
             
             guard let detailViewController = segue.destinationViewController as? AlarmSettingsTableViewController else { return }
             
             detailViewController.alarmPin = alarmPin
+        }
+        
+        if segue.identifier == "toSavedPinsList" {
+            if alarmPin != nil {
+                stopMonitoringAlarmPin(alarmPin)
+            }
         }
     }
 }
@@ -529,7 +528,8 @@ extension MapViewController: HandleMapSearch {
         let fenceDistance: CLLocationDistance = 2000
         
         // Add an alarm pin
-        let alarm = AlarmPin(alarmName: annotation.title!, longitude: placemark.coordinate.longitude, latitude: placemark.coordinate.latitude, radius: fenceDistance)
+        let identifier = NSUUID().UUIDString
+        let alarm = AlarmPin(alarmName: self.annotation.title!, identifier: identifier, longitude: placemark.coordinate.longitude, latitude: placemark.coordinate.latitude, radius: fenceDistance)
         
         addAlarmPin(alarm)
         

@@ -19,10 +19,10 @@
 		DDDB66FB1CA1EA8F00124D06 /* LocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDB66FA1CA1EA8F00124D06 /* LocationController.swift */; };
 		DDDB66FD1CA1F7BC00124D06 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDDB66FC1CA1F7BC00124D06 /* MapKit.framework */; };
 		DDDB66FF1CA1F7C700124D06 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDDB66FE1CA1F7C700124D06 /* CoreLocation.framework */; };
+		DDE3DA8D1D121083000BF8BC /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DDE3DA8B1D121083000BF8BC /* Model.xcdatamodeld */; };
+		DDE3DA8F1D12112C000BF8BC /* AlarmPin+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE3DA8E1D12112C000BF8BC /* AlarmPin+CoreDataProperties.swift */; };
 		DDEC03401D022A0A002C8437 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDEC033F1D022A0A002C8437 /* MapViewController.swift */; };
 		DDEED80C1CA59F8F002A926C /* TestLocations.gpx in Resources */ = {isa = PBXBuildFile; fileRef = DDEED80B1CA59F8F002A926C /* TestLocations.gpx */; };
-		DDF18D9F1CB410770077A2A7 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DDF18D9D1CB410770077A2A7 /* Model.xcdatamodeld */; };
-		DDF18DA11CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF18DA01CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift */; };
 		DDF18DA31CB425B00077A2A7 /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF18DA21CB425B00077A2A7 /* Stack.swift */; };
 /* End PBXBuildFile section */
 
@@ -41,10 +41,10 @@
 		DDDB66FA1CA1EA8F00124D06 /* LocationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationController.swift; sourceTree = "<group>"; };
 		DDDB66FC1CA1F7BC00124D06 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		DDDB66FE1CA1F7C700124D06 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		DDE3DA8C1D121083000BF8BC /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		DDE3DA8E1D12112C000BF8BC /* AlarmPin+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AlarmPin+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		DDEC033F1D022A0A002C8437 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		DDEED80B1CA59F8F002A926C /* TestLocations.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TestLocations.gpx; sourceTree = "<group>"; };
-		DDF18D9E1CB410770077A2A7 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
-		DDF18DA01CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AlarmPin+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		DDF18DA21CB425B00077A2A7 /* Stack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -107,8 +107,8 @@
 				DDC8316B1CE3CE6A00A7A18C /* Misc. */,
 				DDC8316C1CE4EE1D00A7A18C /* SearchTableView */,
 				DDF18DA21CB425B00077A2A7 /* Stack.swift */,
-				DDF18DA01CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift */,
-				DDF18D9D1CB410770077A2A7 /* Model.xcdatamodeld */,
+				DDE3DA8E1D12112C000BF8BC /* AlarmPin+CoreDataProperties.swift */,
+				DDE3DA8B1D121083000BF8BC /* Model.xcdatamodeld */,
 				DDDB66EF1CA1DFD200124D06 /* Assets.xcassets */,
 				DDDB66F11CA1DFD200124D06 /* LaunchScreen.storyboard */,
 				DDDB66F41CA1DFD200124D06 /* Info.plist */,
@@ -206,13 +206,13 @@
 			files = (
 				DDEC03401D022A0A002C8437 /* MapViewController.swift in Sources */,
 				DDC8316A1CE3C63600A7A18C /* SavedAlarmListTableViewController.swift in Sources */,
+				DDE3DA8F1D12112C000BF8BC /* AlarmPin+CoreDataProperties.swift in Sources */,
 				DD9A0FE81CAF0FAB0099006B /* AlarmSettingsTableViewController.swift in Sources */,
-				DDF18DA11CB424AC0077A2A7 /* AlarmPin+CoreDataProperties.swift in Sources */,
 				DDC831681CE3933600A7A18C /* AlarmController.swift in Sources */,
-				DDF18D9F1CB410770077A2A7 /* Model.xcdatamodeld in Sources */,
 				DD9A0FEC1CAF2A4E0099006B /* SearchTableViewController.swift in Sources */,
 				DDF18DA31CB425B00077A2A7 /* Stack.swift in Sources */,
 				DDDB66FB1CA1EA8F00124D06 /* LocationController.swift in Sources */,
+				DDE3DA8D1D121083000BF8BC /* Model.xcdatamodeld in Sources */,
 				DDDB66E91CA1DFD200124D06 /* AppDelegate.swift in Sources */,
 				DD5119191CA32C1B00B6EC51 /* AlarmPin.swift in Sources */,
 			);
@@ -369,12 +369,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		DDF18D9D1CB410770077A2A7 /* Model.xcdatamodeld */ = {
+		DDE3DA8B1D121083000BF8BC /* Model.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				DDF18D9E1CB410770077A2A7 /* Model.xcdatamodel */,
+				DDE3DA8C1D121083000BF8BC /* Model.xcdatamodel */,
 			);
-			currentVersion = DDF18D9E1CB410770077A2A7 /* Model.xcdatamodel */;
+			currentVersion = DDE3DA8C1D121083000BF8BC /* Model.xcdatamodel */;
 			path = Model.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

@@ -3,6 +3,7 @@
     <entity name="AlarmPin" representedClassName="AlarmPin" syncable="YES">
         <attribute name="alarmName" attributeType="String" syncable="YES"/>
         <attribute name="enabled" attributeType="Boolean" syncable="YES"/>
+        <attribute name="identifier" attributeType="String" syncable="YES"/>
         <attribute name="latitude" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="longitude" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="radius" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
@@ -10,6 +11,6 @@
         <attribute name="vibrate" attributeType="Boolean" syncable="YES"/>
     </entity>
     <elements>
-        <element name="AlarmPin" positionX="-63" positionY="-18" width="128" height="150"/>
+        <element name="AlarmPin" positionX="-45" positionY="0" width="128" height="165"/>
     </elements>
 </model>

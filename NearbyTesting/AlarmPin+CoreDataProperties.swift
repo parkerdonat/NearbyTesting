@@ -2,7 +2,7 @@
 //  AlarmPin+CoreDataProperties.swift
 //  NearbyTesting
 //
-//  Created by Parker Donat on 4/5/16.
+//  Created by Parker Donat on 6/15/16.
 //  Copyright © 2016 Parker Donat. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -14,12 +14,13 @@ import CoreData
 
 extension AlarmPin {
 
-    @NSManaged var alarmName: String
-    @NSManaged var vibrate: NSNumber
-    @NSManaged var sound: NSNumber
     @NSManaged var longitude: NSNumber
     @NSManaged var latitude: NSNumber
-    @NSManaged var enabled: NSNumber
     @NSManaged var radius: NSNumber
+    @NSManaged var sound: NSNumber
+    @NSManaged var vibrate: NSNumber
+    @NSManaged var enabled: NSNumber
+    @NSManaged var identifier: String
+    @NSManaged var alarmName: String
 
 }

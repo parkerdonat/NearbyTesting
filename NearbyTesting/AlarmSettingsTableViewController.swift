@@ -102,9 +102,10 @@ class AlarmSettingsTableViewController: UITableViewController, UITextFieldDelega
             alarmPin.alarmName = alarmName
             alarmPin.enabled = enabled
             alarmPin.vibrate = vibrate
+            alarmPin.identifier = alarmPin.alarmName
             return alarmPin
         } else {
-            let newAlarmPin = AlarmPin(alarmName: alarmName)
+            let newAlarmPin = AlarmPin(alarmName: alarmName, identifier: alarmName)
             AlarmController.sharedInstance.addAlarm(newAlarmPin)
             return newAlarmPin
         }
