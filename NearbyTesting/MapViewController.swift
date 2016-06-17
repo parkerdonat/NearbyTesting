@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 import CoreLocation
 import CoreData
-import AudioToolbox
+//import AudioToolbox
 
 protocol HandleMapSearch {
     func dropPinZoomIn(placemark: MKPlacemark)
@@ -461,7 +461,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 alertController.addAction(disableAction)
                 self.presentViewController(alertController, animated: true, completion: nil)
                 //            locationManager.stopMonitoringForRegion(region)
-                AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+                //AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
             }
             
         } else {
@@ -474,7 +474,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             UIApplication.sharedApplication().presentLocalNotificationNow(notification)
             
             locationManager.stopMonitoringForRegion(region)
-            AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+            //AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
             }
         }
     }
